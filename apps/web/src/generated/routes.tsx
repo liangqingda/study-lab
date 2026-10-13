@@ -3,13 +3,27 @@
 import { lazy } from 'react';
 import type { ComponentType } from 'react';
 
-const TechCssVerticalCenteringPage = lazy(() => import("@/pages/Tech/Css/VerticalCentering/index"));
-const TechExpressErrorHandlingPage = lazy(() => import("@/pages/Tech/Express/ErrorHandling/index"));
-const TechExpressMiddlewarePage = lazy(() => import("@/pages/Tech/Express/Middleware/index"));
-const TechExpressResponseMethodsPage = lazy(() => import("@/pages/Tech/Express/ResponseMethods/index"));
-const TechHttpUrlToPagePage = lazy(() => import("@/pages/Tech/Http/UrlToPage/index"));
-const TechPostgresTransactionsPage = lazy(() => import("@/pages/Tech/Postgres/Transactions/index"));
-const TechRedisSmsLoginPage = lazy(() => import("@/pages/Tech/Redis/SmsLogin/index"));
+const TechCssVerticalCenteringPage = lazy(
+  () => import('@/pages/Tech/Css/VerticalCentering/index'),
+);
+const TechExpressErrorHandlingPage = lazy(
+  () => import('@/pages/Tech/Express/ErrorHandling/index'),
+);
+const TechExpressMiddlewarePage = lazy(
+  () => import('@/pages/Tech/Express/Middleware/index'),
+);
+const TechExpressResponseMethodsPage = lazy(
+  () => import('@/pages/Tech/Express/ResponseMethods/index'),
+);
+const TechHttpUrlToPagePage = lazy(
+  () => import('@/pages/Tech/Http/UrlToPage/index'),
+);
+const TechPostgresTransactionsPage = lazy(
+  () => import('@/pages/Tech/Postgres/Transactions/index'),
+);
+const TechRedisSmsLoginPage = lazy(
+  () => import('@/pages/Tech/Redis/SmsLogin/index'),
+);
 
 export type DemoRoute = {
   path: string;
@@ -26,134 +40,134 @@ export type DemoMenuItem = {
   children?: DemoMenuItem[];
 };
 
-export const defaultRoutePath = "/tech/css/vertical-centering";
+export const defaultRoutePath = '/tech/css/vertical-centering';
 
 export const demoRoutes: DemoRoute[] = [
   {
-    path: "/tech/css/vertical-centering",
-    menuKey: "/tech/css/vertical-centering",
-    topLevelKey: "/tech",
-    label: "vertical-centering",
+    path: '/tech/css/vertical-centering',
+    menuKey: '/tech/css/vertical-centering',
+    topLevelKey: '/tech',
+    label: 'vertical-centering',
     Component: TechCssVerticalCenteringPage,
   },
   {
-    path: "/tech/express/error-handling",
-    menuKey: "/tech/express/error-handling",
-    topLevelKey: "/tech",
-    label: "error-handling",
+    path: '/tech/express/error-handling',
+    menuKey: '/tech/express/error-handling',
+    topLevelKey: '/tech',
+    label: 'error-handling',
     Component: TechExpressErrorHandlingPage,
   },
   {
-    path: "/tech/express/middleware",
-    menuKey: "/tech/express/middleware",
-    topLevelKey: "/tech",
-    label: "middleware",
+    path: '/tech/express/middleware',
+    menuKey: '/tech/express/middleware',
+    topLevelKey: '/tech',
+    label: 'middleware',
     Component: TechExpressMiddlewarePage,
   },
   {
-    path: "/tech/express/response-methods",
-    menuKey: "/tech/express/response-methods",
-    topLevelKey: "/tech",
-    label: "response-methods",
+    path: '/tech/express/response-methods',
+    menuKey: '/tech/express/response-methods',
+    topLevelKey: '/tech',
+    label: 'response-methods',
     Component: TechExpressResponseMethodsPage,
   },
   {
-    path: "/tech/http/url-to-page",
-    menuKey: "/tech/http/url-to-page",
-    topLevelKey: "/tech",
-    label: "url-to-page",
+    path: '/tech/http/url-to-page',
+    menuKey: '/tech/http/url-to-page',
+    topLevelKey: '/tech',
+    label: 'url-to-page',
     Component: TechHttpUrlToPagePage,
   },
   {
-    path: "/tech/postgres/transactions",
-    menuKey: "/tech/postgres/transactions",
-    topLevelKey: "/tech",
-    label: "transactions",
+    path: '/tech/postgres/transactions',
+    menuKey: '/tech/postgres/transactions',
+    topLevelKey: '/tech',
+    label: 'transactions',
     Component: TechPostgresTransactionsPage,
   },
   {
-    path: "/tech/redis/sms-login",
-    menuKey: "/tech/redis/sms-login",
-    topLevelKey: "/tech",
-    label: "sms-login",
+    path: '/tech/redis/sms-login',
+    menuKey: '/tech/redis/sms-login',
+    topLevelKey: '/tech',
+    label: 'sms-login',
     Component: TechRedisSmsLoginPage,
   },
 ];
 
 export const headerMenus: DemoMenuItem[] = [
   {
-    "key": "/tech",
-    "label": "tech",
-    "path": "/tech/css/vertical-centering"
-  }
+    key: '/tech',
+    label: 'tech',
+    path: '/tech/css/vertical-centering',
+  },
 ];
 
 export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
-  "/tech": [
+  '/tech': [
     {
-      "key": "group:/tech/css",
-      "label": "css",
-      "children": [
+      key: 'group:/tech/css',
+      label: 'css',
+      children: [
         {
-          "key": "/tech/css/vertical-centering",
-          "label": "vertical-centering",
-          "path": "/tech/css/vertical-centering"
-        }
-      ]
+          key: '/tech/css/vertical-centering',
+          label: 'vertical-centering',
+          path: '/tech/css/vertical-centering',
+        },
+      ],
     },
     {
-      "key": "group:/tech/express",
-      "label": "express",
-      "children": [
+      key: 'group:/tech/express',
+      label: 'express',
+      children: [
         {
-          "key": "/tech/express/error-handling",
-          "label": "error-handling",
-          "path": "/tech/express/error-handling"
+          key: '/tech/express/error-handling',
+          label: 'error-handling',
+          path: '/tech/express/error-handling',
         },
         {
-          "key": "/tech/express/middleware",
-          "label": "middleware",
-          "path": "/tech/express/middleware"
+          key: '/tech/express/middleware',
+          label: 'middleware',
+          path: '/tech/express/middleware',
         },
         {
-          "key": "/tech/express/response-methods",
-          "label": "response-methods",
-          "path": "/tech/express/response-methods"
-        }
-      ]
+          key: '/tech/express/response-methods',
+          label: 'response-methods',
+          path: '/tech/express/response-methods',
+        },
+      ],
     },
     {
-      "key": "group:/tech/http",
-      "label": "http",
-      "children": [
+      key: 'group:/tech/http',
+      label: 'http',
+      children: [
         {
-          "key": "/tech/http/url-to-page",
-          "label": "url-to-page",
-          "path": "/tech/http/url-to-page"
-        }
-      ]
+          key: '/tech/http/url-to-page',
+          label: 'url-to-page',
+          path: '/tech/http/url-to-page',
+        },
+      ],
     },
     {
-      "key": "group:/tech/postgres",
-      "label": "postgres",
-      "children": [
+      key: 'group:/tech/postgres',
+      label: 'postgres',
+      children: [
         {
-          "key": "/tech/postgres/transactions",
-          "label": "transactions",
-          "path": "/tech/postgres/transactions"
-        }
-      ]
+          key: '/tech/postgres/transactions',
+          label: 'transactions',
+          path: '/tech/postgres/transactions',
+        },
+      ],
     },
     {
-      "key": "group:/tech/redis",
-      "label": "redis",
-      "children": [
+      key: 'group:/tech/redis',
+      label: 'redis',
+      children: [
         {
-          "key": "/tech/redis/sms-login",
-          "label": "sms-login",
-          "path": "/tech/redis/sms-login"
-        }
-      ]
-    }
-  ]
+          key: '/tech/redis/sms-login',
+          label: 'sms-login',
+          path: '/tech/redis/sms-login',
+        },
+      ],
+    },
+  ],
 };

@@ -1,8 +1,6 @@
-import { useNavigate } from 'react-router';
 import {
   ActionIcon,
   Group,
-  SegmentedControl,
   Select,
   Text,
   Title,
@@ -21,42 +19,24 @@ import type { DemoMenuItem } from '@/generated/routes';
 import styles from './index.scss';
 
 type HeaderProps = {
-  menus: DemoMenuItem[];
-  realms: DemoMenuItem[];
   activeRealmKey?: string;
   onRealmChange: (key: string) => void;
-  selectedTopLevelKey?: string;
+  realms: DemoMenuItem[];
 };
 
 const capitalize = (value: string) =>
   value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
 
-const Header = ({
-  menus,
-  realms,
-  activeRealmKey,
-  onRealmChange,
-  selectedTopLevelKey,
-}: HeaderProps) => {
-  const navigate = useNavigate();
+const Header = ({ activeRealmKey, onRealmChange, realms }: HeaderProps) => {
   const { setColorScheme } = useMantineColorScheme();
   const isDark = useComputedColorScheme('light') === 'dark';
-  const activeMenuKey = selectedTopLevelKey ?? menus[0]?.key;
-  const menuData = menus.map((item) => ({
-    label: capitalize(item.label),
-    value: item.key,
-  }));
   const realmData = realms.map((item) => ({
     label: capitalize(item.label),
     value: item.key,
   }));
 
-  const handleMenuChange = (value: string) => {
-    const nextMenu = menus.find((item) => item.key === value);
-
-    if (nextMenu?.path) {
-      navigate(nextMenu.path);
-    }
+  const handleRealmChange = (value: string) => {
+    onRealmChange(value);
   };
 
   return (
@@ -75,19 +55,6 @@ const Header = ({
         </div>
       </Group>
 
-      {activeMenuKey && menuData.length > 0 ? (
-        <nav aria-label="Demo sections" className={styles.demoHeaderMenu}>
-          <SegmentedControl
-            className={styles.demoHeaderSegments}
-            color="teal"
-            data={menuData}
-            onChange={handleMenuChange}
-            radius="md"
-            size="sm"
-            value={activeMenuKey}
-          />
-        </nav>
-      ) : null}
       <Group gap="xs" ml="auto" wrap="nowrap">
         <Select
           aria-label="切换领域"
@@ -95,7 +62,7 @@ const Header = ({
           data={realmData}
           onChange={(value) => {
             if (value) {
-              onRealmChange(value);
+              handleRealmChange(value);
             }
           }}
           placeholder="领域"

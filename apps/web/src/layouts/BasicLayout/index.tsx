@@ -33,12 +33,6 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
     () => demoRoutes.find((route) => route.path === location.pathname),
     [location.pathname],
   );
-  const selectedTopLevelKey =
-    selectedRoute?.topLevelKey ?? activeRealmKey ?? realms[0]?.key;
-  // 当前领域内的 header 段（领域内顶层 section，随领域切换而整体替换）。
-  const realmHeaderMenus = realms.filter(
-    (item) => item.key === activeRealmKey,
-  );
   const sidebarMenus = activeRealmKey
     ? (sidebarMenusByTopLevel[activeRealmKey] ?? [])
     : [];
@@ -63,10 +57,8 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
       <AppShell.Header className={styles.demoHeader}>
         <Header
           activeRealmKey={activeRealmKey}
-          menus={realmHeaderMenus}
           onRealmChange={handleRealmChange}
           realms={realms}
-          selectedTopLevelKey={selectedTopLevelKey}
         />
       </AppShell.Header>
 
