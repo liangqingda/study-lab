@@ -4,6 +4,8 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import prettier from 'prettier';
+
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pageFileExtensionPattern = /\.(tsx|jsx|ts|js)$/;
 const ignoredSegmentNames = new Set(['components', 'constants', 'errors', 'hooks', 'types', 'utils']);
@@ -381,6 +383,16 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = ${formatMe
   )};
 `;
 
+  // 统一经 prettier 格式化，保证 vite 插件（dev/build）与 `pnpm gen:routes`
+  // 输出一致，避免每次生成产生格式差异。
+  let finalOutput = output;
+
+  try {
+    finalOutput = await prettier.format(output, { filepath: outputFile });
+  } catch {
+    // 保持生成器原始输出，格式化失败不应阻断路由生成。
+  }
+
   await mkdir(path.dirname(outputFile), { recursive: true });
   const previous = await readFile(outputFile, 'utf8').catch((error) => {
     if (error.code === 'ENOENT') { return undefined; }
@@ -388,11 +400,11 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = ${formatMe
     throw error;
   });
 
-  if (previous !== output) {
-    await writeFile(outputFile, output);
+  if (previous !== finalOutput) {
+    await writeFile(outputFile, finalOutput);
   }
 
-  return { output, changed: previous !== output, count: routes.length };
+  return { output: finalOutput, changed: previous !== finalOutput, count: routes.length };
 };
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

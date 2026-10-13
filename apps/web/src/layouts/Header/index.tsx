@@ -60,7 +60,7 @@ const Header = ({
     }
   };
 
-  const handleRealmChange = (value: string) => {
+  const handleRealmChange = (value: string | null) => {
     if (value) {
       onRealmChange(value);
     }
