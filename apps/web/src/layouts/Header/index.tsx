@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router';
 import {
   ActionIcon,
   Group,
+  SegmentedControl,
   Select,
   Text,
   Title,
@@ -19,7 +21,9 @@ import type { DemoMenuItem } from '@/generated/routes';
 import styles from './index.scss';
 
 type HeaderProps = {
+  activeMenuKey?: string;
   activeRealmKey?: string;
+  menus: DemoMenuItem[];
   onRealmChange: (key: string) => void;
   realms: DemoMenuItem[];
 };
@@ -27,16 +31,38 @@ type HeaderProps = {
 const capitalize = (value: string) =>
   value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
 
-const Header = ({ activeRealmKey, onRealmChange, realms }: HeaderProps) => {
+const Header = ({
+  activeMenuKey,
+  activeRealmKey,
+  menus,
+  onRealmChange,
+  realms,
+}: HeaderProps) => {
+  const navigate = useNavigate();
   const { setColorScheme } = useMantineColorScheme();
   const isDark = useComputedColorScheme('light') === 'dark';
+  const menuData = menus.map((item) => ({
+    label: capitalize(item.label),
+    value: item.key,
+  }));
   const realmData = realms.map((item) => ({
     label: capitalize(item.label),
     value: item.key,
   }));
 
+  const handleMenuChange = (value: string) => {
+    const nextMenu = menus.find((item) => item.key === value);
+    const targetPath = nextMenu?.path ?? nextMenu?.children?.[0]?.path;
+
+    if (targetPath) {
+      navigate(targetPath);
+    }
+  };
+
   const handleRealmChange = (value: string) => {
-    onRealmChange(value);
+    if (value) {
+      onRealmChange(value);
+    }
   };
 
   return (
@@ -55,16 +81,26 @@ const Header = ({ activeRealmKey, onRealmChange, realms }: HeaderProps) => {
         </div>
       </Group>
 
+      {menus.length > 0 ? (
+        <nav aria-label="Demo sections" className={styles.demoHeaderMenu}>
+          <SegmentedControl
+            className={styles.demoHeaderSegments}
+            color="teal"
+            data={menuData}
+            onChange={handleMenuChange}
+            radius="md"
+            size="sm"
+            value={activeMenuKey}
+          />
+        </nav>
+      ) : null}
+
       <Group gap="xs" ml="auto" wrap="nowrap">
         <Select
           aria-label="切换领域"
           className={styles.realmSelect}
           data={realmData}
-          onChange={(value) => {
-            if (value) {
-              handleRealmChange(value);
-            }
-          }}
+          onChange={handleRealmChange}
           placeholder="领域"
           radius="md"
           size="sm"

@@ -36,6 +36,14 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
   const sidebarMenus = activeRealmKey
     ? (sidebarMenusByTopLevel[activeRealmKey] ?? [])
     : [];
+  // header 分类段 = 当前领域的分类分组（随领域切换整体替换）。
+  const realmCategories = sidebarMenus;
+  // 当前路由所属分类，用于 header 分类段高亮。
+  const selectedCategoryKey =
+    realmCategories.find(
+      (item) =>
+        item.children?.some((child) => child.key === selectedRoute?.menuKey),
+    )?.key ?? realmCategories[0]?.key;
 
   const handleRealmChange = (key: string) => {
     setActiveRealmKey(key);
@@ -56,7 +64,9 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
     >
       <AppShell.Header className={styles.demoHeader}>
         <Header
+          activeMenuKey={selectedCategoryKey}
           activeRealmKey={activeRealmKey}
+          menus={realmCategories}
           onRealmChange={handleRealmChange}
           realms={realms}
         />
