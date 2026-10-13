@@ -33,17 +33,20 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
     () => demoRoutes.find((route) => route.path === location.pathname),
     [location.pathname],
   );
-  const sidebarMenus = activeRealmKey
+  // 当前领域的分类（header 分类段，随领域切换整体替换）。
+  const realmCategories = activeRealmKey
     ? (sidebarMenusByTopLevel[activeRealmKey] ?? [])
     : [];
-  // header 分类段 = 当前领域的分类分组（随领域切换整体替换）。
-  const realmCategories = sidebarMenus;
   // 当前路由所属分类，用于 header 分类段高亮。
   const selectedCategoryKey =
     realmCategories.find(
       (item) =>
         item.children?.some((child) => child.key === selectedRoute?.menuKey),
     )?.key ?? realmCategories[0]?.key;
+  // 侧边栏只显示当前分类下的 demo 列表（与改造前行为一致，不显示大分类分组）。
+  const sidebarMenus =
+    realmCategories.find((item) => item.key === selectedCategoryKey)
+      ?.children ?? [];
 
   const handleRealmChange = (key: string) => {
     setActiveRealmKey(key);
@@ -64,11 +67,11 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
     >
       <AppShell.Header className={styles.demoHeader}>
         <Header
-          activeMenuKey={selectedCategoryKey}
           activeRealmKey={activeRealmKey}
           menus={realmCategories}
           onRealmChange={handleRealmChange}
           realms={realms}
+          selectedTopLevelKey={selectedCategoryKey}
         />
       </AppShell.Header>
 
@@ -76,7 +79,7 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
         <Sidebar
           menus={sidebarMenus}
           routes={demoRoutes}
-          sectionKey={activeRealmKey}
+          sectionKey={selectedCategoryKey}
           selectedRoute={selectedRoute}
         />
       </AppShell.Navbar>

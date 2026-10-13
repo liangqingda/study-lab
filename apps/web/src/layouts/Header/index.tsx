@@ -21,28 +21,29 @@ import type { DemoMenuItem } from '@/generated/routes';
 import styles from './index.scss';
 
 type HeaderProps = {
-  activeMenuKey?: string;
   activeRealmKey?: string;
   menus: DemoMenuItem[];
   onRealmChange: (key: string) => void;
   realms: DemoMenuItem[];
+  selectedTopLevelKey?: string;
 };
 
 const capitalize = (value: string) =>
   value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
 
 const Header = ({
-  activeMenuKey,
   activeRealmKey,
   menus,
   onRealmChange,
   realms,
+  selectedTopLevelKey,
 }: HeaderProps) => {
   const navigate = useNavigate();
   const { setColorScheme } = useMantineColorScheme();
   const isDark = useComputedColorScheme('light') === 'dark';
+  const activeMenuKey = selectedTopLevelKey ?? menus[0]?.key;
   const menuData = menus.map((item) => ({
-    label: capitalize(item.label),
+    label: item.label,
     value: item.key,
   }));
   const realmData = realms.map((item) => ({
@@ -81,7 +82,7 @@ const Header = ({
         </div>
       </Group>
 
-      {menus.length > 0 ? (
+      {activeMenuKey && menuData.length > 0 ? (
         <nav aria-label="Demo sections" className={styles.demoHeaderMenu}>
           <SegmentedControl
             className={styles.demoHeaderSegments}
