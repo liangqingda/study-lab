@@ -25,11 +25,11 @@ const SkillsDemosTakeNotesPage = lazy(
 const SkillsDemosTechDemoPage = lazy(
   () => import("@/pages/Skills/Demos/TechDemo/index"),
 );
-const TechCssVerticalCenteringPage = lazy(
-  () => import("@/pages/Tech/Css/VerticalCentering/index"),
-);
 const CategoryLearningPathPage = lazy(
   () => import("@/components/CategoryLearningPath"),
+);
+const TechCssVerticalCenteringPage = lazy(
+  () => import("@/pages/Tech/Css/VerticalCentering/index"),
 );
 const TechExpressErrorHandlingPage = lazy(
   () => import("@/pages/Tech/Express/ErrorHandling/index"),
@@ -86,7 +86,7 @@ export type DemoMenuItem = {
   sidebarOnly?: boolean;
 };
 
-export const defaultRoutePath = "/tech/css/vertical-centering";
+export const defaultRoutePath = "/tech/css";
 
 export const demoRoutes: DemoRoute[] = [
   {
@@ -146,6 +146,13 @@ export const demoRoutes: DemoRoute[] = [
     Component: SkillsDemosTechDemoPage,
   },
   {
+    path: "/tech/css",
+    menuKey: "/tech/css",
+    topLevelKey: "/tech",
+    label: "学习路径",
+    Component: CategoryLearningPathPage,
+  },
+  {
     path: "/tech/css/vertical-centering",
     menuKey: "/tech/css/vertical-centering",
     topLevelKey: "/tech",
@@ -193,6 +200,13 @@ export const demoRoutes: DemoRoute[] = [
     topLevelKey: "/tech",
     label: "wrap-up",
     Component: TechExpressWrapUpPage,
+  },
+  {
+    path: "/tech/http",
+    menuKey: "/tech/http",
+    topLevelKey: "/tech",
+    label: "学习路径",
+    Component: CategoryLearningPathPage,
   },
   {
     path: "/tech/http/url-to-page",
@@ -258,11 +272,25 @@ export const demoRoutes: DemoRoute[] = [
     Component: TechMcpWrapUpPage,
   },
   {
+    path: "/tech/postgres",
+    menuKey: "/tech/postgres",
+    topLevelKey: "/tech",
+    label: "学习路径",
+    Component: CategoryLearningPathPage,
+  },
+  {
     path: "/tech/postgres/transactions",
     menuKey: "/tech/postgres/transactions",
     topLevelKey: "/tech",
     label: "transactions",
     Component: TechPostgresTransactionsPage,
+  },
+  {
+    path: "/tech/redis",
+    menuKey: "/tech/redis",
+    topLevelKey: "/tech",
+    label: "学习路径",
+    Component: CategoryLearningPathPage,
   },
   {
     path: "/tech/redis/sms-login",
@@ -277,7 +305,7 @@ export const headerMenus: DemoMenuItem[] = [
   {
     key: "/tech",
     label: "tech",
-    path: "/tech/css/vertical-centering",
+    path: "/tech/css",
     sidebarOnly: false,
   },
   {
@@ -294,6 +322,11 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
       key: "group:/tech/css",
       label: "css",
       children: [
+        {
+          key: "/tech/css",
+          label: "学习路径",
+          path: "/tech/css",
+        },
         {
           key: "/tech/css/vertical-centering",
           label: "vertical-centering",
@@ -316,11 +349,6 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
           path: "/tech/express/error-handling",
         },
         {
-          key: "/tech/express/intro",
-          label: "intro",
-          path: "/tech/express/intro",
-        },
-        {
           key: "/tech/express/middleware",
           label: "middleware",
           path: "/tech/express/middleware",
@@ -330,17 +358,17 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
           label: "response-methods",
           path: "/tech/express/response-methods",
         },
-        {
-          key: "/tech/express/wrap-up",
-          label: "wrap-up",
-          path: "/tech/express/wrap-up",
-        },
       ],
     },
     {
       key: "group:/tech/http",
       label: "http",
       children: [
+        {
+          key: "/tech/http",
+          label: "学习路径",
+          path: "/tech/http",
+        },
         {
           key: "/tech/http/url-to-page",
           label: "url-to-page",
@@ -357,47 +385,17 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
           label: "学习路径",
           path: "/tech/mcp",
         },
-        {
-          key: "/tech/mcp/architecture",
-          label: "architecture",
-          path: "/tech/mcp/architecture",
-        },
-        {
-          key: "/tech/mcp/intro",
-          label: "intro",
-          path: "/tech/mcp/intro",
-        },
-        {
-          key: "/tech/mcp/prompts",
-          label: "prompts",
-          path: "/tech/mcp/prompts",
-        },
-        {
-          key: "/tech/mcp/resources",
-          label: "resources",
-          path: "/tech/mcp/resources",
-        },
-        {
-          key: "/tech/mcp/tools",
-          label: "tools",
-          path: "/tech/mcp/tools",
-        },
-        {
-          key: "/tech/mcp/transports",
-          label: "transports",
-          path: "/tech/mcp/transports",
-        },
-        {
-          key: "/tech/mcp/wrap-up",
-          label: "wrap-up",
-          path: "/tech/mcp/wrap-up",
-        },
       ],
     },
     {
       key: "group:/tech/postgres",
       label: "postgres",
       children: [
+        {
+          key: "/tech/postgres",
+          label: "学习路径",
+          path: "/tech/postgres",
+        },
         {
           key: "/tech/postgres/transactions",
           label: "transactions",
@@ -409,6 +407,11 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
       key: "group:/tech/redis",
       label: "redis",
       children: [
+        {
+          key: "/tech/redis",
+          label: "学习路径",
+          path: "/tech/redis",
+        },
         {
           key: "/tech/redis/sms-login",
           label: "sms-login",

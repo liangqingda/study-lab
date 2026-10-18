@@ -1,7 +1,9 @@
 import { Badge, Button, Group, Rating, Text } from '@mantine/core';
 import { IconArrowLeft, IconArrowRight, IconCheck } from '@tabler/icons-react';
 import { useLocation, useNavigate } from 'react-router';
+import { useContext } from 'react';
 
+import { LearningPreviewContext } from '@/components/LearningPreview/Context';
 import { useLearningPath } from '@/hooks/useLearningPath';
 import { useLearningProgress } from '@/hooks/useLearningProgress';
 
@@ -13,22 +15,23 @@ const PROFICIENCY_LABELS = ['生疏', '了解', '熟悉', '熟练', '精通'];
 /**
  * 概念页与 demo 页正文底部的学习路径控件，由共用布局内嵌。
  *
- * 显示「本模块第 N/M 步」与已完成进度，提供上一/下一模块导航，并对当前
+ * 显示「本模块第 N/M 步」与已完成进度，提供上一/下一步导航，并对当前
  * 步骤提供「标记完成」与熟练度标记。完成只由用户主动点击触发，进入页面
  * 不会自动勾选。
  */
 const LearningPathControls = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const preview = useContext(LearningPreviewContext);
   const info = useLearningPath();
   const { getProgress, setCompleted, setProficiency } = useLearningProgress();
 
-  if (!info || info.total < 2) {
+  if (!info || info.total === 0) {
     return null;
   }
 
   const currentIndex = info.steps.findIndex(
-    (step) => step.demoPath === location.pathname,
+    (step) => step.demoPath === (preview?.path ?? location.pathname),
   );
 
   // 当前页面不属于该模块路径上的 lab 步骤（如模块外的页面）时不展示。
@@ -50,7 +53,7 @@ const LearningPathControls = () => {
 
   const goTo = (demoPath?: string) => {
     if (demoPath) {
-      navigate(demoPath);
+      (preview?.navigate ?? navigate)(demoPath);
     }
   };
 
@@ -87,7 +90,7 @@ const LearningPathControls = () => {
             size="xs"
             variant="subtle"
           >
-            上一模块
+            上一步
           </Button>
         ) : null}
         {hasNext ? (
@@ -97,7 +100,7 @@ const LearningPathControls = () => {
             size="xs"
             variant="subtle"
           >
-            下一模块
+            下一步
           </Button>
         ) : null}
         <Button

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 const STORAGE_KEY = 'study-lab:learning-progress-v2';
 
@@ -24,7 +24,9 @@ const loadProgress = (): ProgressMap => {
 
     const parsed = JSON.parse(raw) as unknown;
 
-    return typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)
+    return typeof parsed === 'object' &&
+      parsed !== null &&
+      !Array.isArray(parsed)
       ? (parsed as ProgressMap)
       : {};
   } catch {
@@ -32,12 +34,51 @@ const loadProgress = (): ProgressMap => {
   }
 };
 
-const persistProgress = (progress: ProgressMap) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-  } catch {
-    // 本地存储不可用时静默降级：进度只在本次会话内有效。
+/** 当前页面内共享的进度快照，保证弹窗与总览同步。 */
+let snapshot: ProgressMap = loadProgress();
+
+/** 进度变化订阅者。 */
+const listeners = new Set<() => void>();
+
+/** 订阅同页操作以及其他标签页的存储变化。 */
+const subscribe = (listener: () => void) => {
+  listeners.add(listener);
+
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === STORAGE_KEY || event.key === null) {
+      snapshot = loadProgress();
+      listener();
+    }
+  };
+
+  window.addEventListener('storage', onStorage);
+
+  return () => {
+    listeners.delete(listener);
+    window.removeEventListener('storage', onStorage);
+  };
+};
+
+/** 返回稳定快照供 React 订阅。 */
+const getSnapshot = () => snapshot;
+
+/** 发布并持久化新的进度；存储不可用时保留本次会话内的进度。 */
+const updateProgress = (update: (previous: ProgressMap) => ProgressMap) => {
+  const next = update(snapshot);
+
+  if (next === snapshot) {
+    return;
   }
+
+  snapshot = next;
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // 本地存储不可用时保留内存快照。
+  }
+
+  listeners.forEach((listener) => listener());
 };
 
 /**
@@ -47,7 +88,7 @@ const persistProgress = (progress: ProgressMap) => {
  * 进入页面不会自动勾选。熟练度由用户自行标记（1-5 档）。
  */
 export const useLearningProgress = () => {
-  const [progress, setProgress] = useState<ProgressMap>(loadProgress);
+  const progress = useSyncExternalStore(subscribe, getSnapshot);
 
   const getProgress = useCallback(
     (stepId: string): StepProgress => progress[stepId] ?? {},
@@ -55,7 +96,7 @@ export const useLearningProgress = () => {
   );
 
   const setCompleted = useCallback((stepId: string, completed: boolean) => {
-    setProgress((previous) => {
+    updateProgress((previous) => {
       const current = previous[stepId] ?? {};
 
       if ((current.completed ?? false) === completed) {
@@ -64,14 +105,12 @@ export const useLearningProgress = () => {
 
       const next = { ...previous, [stepId]: { ...current, completed } };
 
-      persistProgress(next);
-
       return next;
     });
   }, []);
 
   const setProficiency = useCallback((stepId: string, proficiency: number) => {
-    setProgress((previous) => {
+    updateProgress((previous) => {
       const current = previous[stepId] ?? {};
 
       if (current.proficiency === proficiency) {
@@ -83,8 +122,6 @@ export const useLearningProgress = () => {
         [stepId]: { ...current, proficiency },
       };
 
-      persistProgress(next);
-
       return next;
     });
   }, []);
@@ -94,7 +131,7 @@ export const useLearningProgress = () => {
       return;
     }
 
-    setProgress((previous) => {
+    updateProgress((previous) => {
       const next = { ...previous };
 
       for (const stepId of stepIds) {
@@ -104,8 +141,6 @@ export const useLearningProgress = () => {
       if (Object.keys(next).length === Object.keys(previous).length) {
         return previous;
       }
-
-      persistProgress(next);
 
       return next;
     });

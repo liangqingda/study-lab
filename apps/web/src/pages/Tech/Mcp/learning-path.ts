@@ -3,7 +3,7 @@
  * MCP（Model Context Protocol）模块的学习路径（教学大纲）。
  *
  * 这是模块级的学习总览数据源：`pnpm gen:routes` 检测到本文件存在，就自动为
- * `tech/mcp` 生成「学习路径」落地页与侧边栏入口；落地页与概念页顶部的学习
+ * `tech/mcp` 生成「学习路径」落地页与侧边栏入口；落地页与概念页底部的学习
  * 路径控件按本文件的步骤顺序渲染。
  *
  * 内容依据：https://modelcontextprotocol.io/docs 及其子页（Introduction /
@@ -14,7 +14,7 @@
  *   “先建立全局图景 → 拆解三角色 → 逐个理解三大原语与传输 → 串成完整闭环”
  *   组织，每步都是概念介绍页（kind: `concept`）。
  * - 每步 `demo` 对应本分类下的页面目录名（kebab-case，如 `Architecture` →
- *   `architecture`），前端据此推导「开始学习」进入的路由。
+ *   `architecture`），前端据此推导「开始学习」弹窗预览的路由。
  * - 每步 `id` 必须稳定且唯一，作为完成状态与熟练度的本地存储 key。
  * - 本文件只放字面量数据，不 `import` 任何模块。
  */

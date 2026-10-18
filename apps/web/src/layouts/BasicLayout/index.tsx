@@ -42,23 +42,26 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
    * 侧边栏直接列出该领域全部 demo。
    */
   const isFlatRealm =
+    activeRealmKey === '/skills' &&
     realmCategories.length === 1 &&
     Boolean(realmCategories[0].children?.length);
   const headerCategories = isFlatRealm ? [] : realmCategories;
   // 当前路由所属分类，用于 header 分类段高亮。
   const selectedCategoryKey = isFlatRealm
     ? realmCategories[0]?.key
-    : realmCategories.find(
+    : (realmCategories.find(
         (item) =>
           item.children?.some(
             (child) => child.key === selectedRoute?.menuKey,
-          ),
-      )?.key ?? realmCategories[0]?.key;
+          ) ||
+          item.key ===
+            `group:/${location.pathname.split('/').filter(Boolean).slice(0, 2).join('/')}`,
+      )?.key ?? realmCategories[0]?.key);
   // 侧边栏 = 当前领域下所选分类的 demo 列表（扁平领域直接列全部 demo）。
   const sidebarMenus = isFlatRealm
     ? (realmCategories[0]?.children ?? [])
-    : realmCategories.find((item) => item.key === selectedCategoryKey)
-        ?.children ?? [];
+    : (realmCategories.find((item) => item.key === selectedCategoryKey)
+        ?.children ?? []);
 
   const handleRealmChange = (key: string) => {
     const target = visibleRealms.find((item) => item.key === key);

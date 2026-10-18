@@ -1,5 +1,8 @@
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { useLocation } from 'react-router';
+
+import { LearningPreviewContext } from '@/components/LearningPreview/Context';
+import { learningPaths } from '@/generated/learning-paths';
 
 /** 学习步骤类型：概念/讲解（concept）或 动手实验（lab）。 */
 export type LearningPathStepKind = 'concept' | 'lab';
@@ -16,7 +19,7 @@ export type LearningPathStep = {
   summary: string;
   /** 步骤类型：概念讲解或动手实验。 */
   kind: LearningPathStepKind;
-  /** 关联 demo 的路由路径（仅 lab 步骤），如 `/tech/express/middleware`。 */
+  /** 预览概念或实验的路由路径，如 `/tech/express/middleware`。 */
   demoPath?: string;
 };
 
@@ -38,26 +41,24 @@ export type LearningPathInfo = {
 
 /** learning-path.ts 的原始配置形态。 */
 type RawLearningPath = {
+  /** 模块名称。 */
   label: string;
+  /** 模块说明。 */
   description: string;
+  /** 有序步骤。 */
   steps: Array<{
+    /** 稳定进度标识。 */
     id: string;
+    /** 内容类型。 */
     kind?: LearningPathStepKind;
+    /** 对应页面目录。 */
     demo?: string;
+    /** 步骤标题。 */
     title: string;
+    /** 步骤说明。 */
     summary: string;
   }>;
 };
-
-/**
- * 运行时装在所有分类下的 `learning-path.ts` 配置。
- * key 形如 `/src/pages/Tech/Express/learning-path.ts`；eager 使模块同步可用。
- * 注意：这里刻意不 import `generated/routes`，避免 demo 页面 → 布局 → 本 hook →
- * 路由表（其 lazy 引用了所有 demo 页）构成依赖环。
- */
-const learningPathModules = import.meta.glob('@/pages/*/*/learning-path.ts', {
-  eager: true,
-});
 
 /** 与路由段一致的 kebab-case（与 gen-routes 的 toRouteSegment 同规则）。 */
 const kebabCase = (value: string) =>
@@ -68,53 +69,39 @@ const kebabCase = (value: string) =>
     .replace(/-+/g, '-')
     .toLowerCase();
 
-/** 从 glob key 解析出分类目录名并转成路由前缀。 */
-const resolveCategoryFromKey = (
-  key: string,
-): { realmPath: string; categoryPath: string } | null => {
-  const match = /\/pages\/([^/]+)\/([^/]+)\/learning-path\.ts$/.exec(key);
-
-  return match
-    ? {
-        realmPath: `/${kebabCase(match[1])}`,
-        categoryPath: `/${kebabCase(match[1])}/${kebabCase(match[2])}`,
-      }
-    : null;
-};
-
 /**
  * 读取当前路由所属分类的学习路径信息。
  *
- * - 分类目录下没有 `learning-path.ts`、或路径不在已配置分类内时返回 null；
- * - `steps` 顺序沿用配置；`lab` 步骤带 `demo` 时推导出 `demoPath`，
- *   纯概念步骤不关联 demo。
+ * 读取生成器的统一元数据（包含自动补齐的分类），概念与实验均可预览。
+ * Skills 等无学习路径的页面返回 null。
  */
 export const useLearningPath = (): LearningPathInfo | null => {
   const location = useLocation();
+  const preview = useContext(LearningPreviewContext);
+  const pathname = preview?.path ?? location.pathname;
 
   return useMemo(() => {
-    const [realm, category] = location.pathname.split('/').filter(Boolean);
+    const [realm, category] = pathname.split('/').filter(Boolean);
 
     if (!realm || !category) {
       return null;
     }
 
     const categoryPath = `/${realm}/${category}`;
-    const entry = Object.entries(learningPathModules).find(([key]) => {
-      const resolved = resolveCategoryFromKey(key);
+    const config = (learningPaths as Partial<Record<string, RawLearningPath>>)[
+      categoryPath
+    ];
 
-      return resolved?.categoryPath === categoryPath;
-    });
-
-    if (!entry) {
+    if (!config) {
       return null;
     }
 
-    const config = (entry[1] as { learningPath: RawLearningPath }).learningPath;
     const steps: LearningPathStep[] = config.steps.map((step, index) => ({
       id: step.id,
       index: index + 1,
+      /** 步骤标题。 */
       title: step.title,
+      /** 步骤说明。 */
       summary: step.summary,
       kind: step.kind ?? 'lab',
       ...(step.demo
@@ -134,5 +121,5 @@ export const useLearningPath = (): LearningPathInfo | null => {
       steps,
       total: steps.length,
     };
-  }, [location.pathname]);
+  }, [pathname]);
 };

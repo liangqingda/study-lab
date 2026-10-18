@@ -67,23 +67,15 @@ description: Implement runnable, observable learning demos in the study-lab work
 - 组件适当拆分，每个组件单独一个文件，不要把多个组件堆在 `index.tsx` 里；子组件放在同目录的 `components/` 下，hook 放在 `hooks/` 下。
 - 只有当前页面用到的代码才放在该页面目录；跨 demo 复用的才提升到公共目录。
 
-## 学习路径落地页（模块总览）
+## 学习路径与侧边栏（强制）
 
-分类（大模块）可以拥有一个由生成器产出的「学习路径」总览页，展示该模块下各步骤的推荐学习顺序、完成状态与熟练度。**新增模块时无需手写总览页，按下列约定放配置即可自动生效：**
-
-- 在分类目录下放置 `pages/Tech/<原分类>/learning-path.ts`，内容为**纯字面量数据**（不得 `import` 任何模块，生成器与前端运行时都不解析别名）。顶部需加 `/* eslint-disable liangqingda-react/filename-naming-convention */` 豁免文件名规则。结构：
-  - `label`：模块展示名（落地页标题）；
-  - `description`：模块整体说明；
-  - `steps`：**设计的教学路径**（概念铺垫→实验→总结，不是 demo 机械平铺）。每项 `{ id, kind, demo, title, summary }`：
-    - `id`：稳定唯一，作为完成状态与熟练度本地存储 key；
-    - `kind`：`concept`（概念介绍页）或 `lab`（动手实验页）；
-    - `demo`：本分类下的页面目录名（kebab-case，如 `Middleware` → `middleware`），**每一步都必须填写**——lab 关联实验页，concept 关联概念介绍页，前端据此生成「开始学习」路由；
-    - `title`/`summary`：步骤标题与一句话说明。
-- `pnpm gen:routes` 检测到该文件后，自动为 `/tech/<原分类>` 生成「学习路径」落地页路由（复用共享组件 `src/components/CategoryLearningPath`）与侧边栏「学习路径」入口（列为该分类第一项）；落地页与各页面顶部控件（`LearningPathControls`）按 `steps` 顺序渲染。
-- **每一步都要有可进入的页面**：lab 步骤用现有 demo 页；concept 步骤在 `pages/Tech/<原分类>/<页名>/index.tsx` 建概念介绍页，布局用 `src/components/ConceptPageLayout`（页头 + 学习路径控件，无“代码结构/知识点讲解”弹窗）。
-- 完成与熟练度由用户**主动点击**（落地页每步与页面顶部控件均有「标记完成」与 1-5 档熟练度），进入页面不会自动勾选；按步骤 `id` 存 localStorage。
-- 新增模块的推荐流程：先建各实验页、概念页与 schema 契约，再补 `learning-path.ts`，最后跑 `pnpm gen:routes` 确认路由与侧边栏。
-- 单 demo 模块可省略 `learning-path.ts`（无总览页、控件不显示）；多 demo 模块建议配置，以便学习者看到推荐顺序、进度与熟练度。
+- 除 Skills 外，每个分类侧边栏第一项必须是「学习路径」，下方只列可运行 Demo；概念铺垫、讲解与总结仅通过学习路径预览。
+- 分类首页使用共享 `CategoryLearningPath`，点击「开始学习」使用 `LearningPreview` 全屏弹窗，保持总览 URL 与滚动位置；弹窗内上下步骤也只切换预览。完成与熟练度控件在正文底部，和总览实时同步，进入页面不自动完成。
+- 生成器为所有非 Skills 分类补齐学习路径。未配置时自动生成基础实验顺序；新增教学内容应优先在 `pages/Tech/<分类>/learning-path.ts` 设计概念→实验→总结，导出纯字面量 `learningPath`（不 import），包含 `label`、`description`、`steps`。
+- 每步必须填写 `{ id, kind, demo, title, summary }`：id 全局稳定唯一，kind 为 concept 或 lab，demo 对应分类真实页面目录（PascalCase 或 kebab-case）。配置完整覆盖所有页面，每页一次，已有 id 不随改标题变化。
+- 概念页使用 `ConceptPageLayout`；实验页使用 `DemoLayout`。无需手写总览或菜单，不编辑 generated 文件。
+- 新增页面或修改配置后运行 `pnpm --filter @study-lab/web gen:routes`。生成器拒绝缺失目标、重复 id/页面、非法 kind、漏登记新页面、路由冲突；开发服务器在增删改页面时执行同一校验。
+- 验证菜单顺序、概念不出现在菜单、弹窗打开/关闭与切换、进度同步；运行 `node --test apps/web/scripts/gen-routes.test.mjs`、类型检查和构建。
 
 ## 前端页面设计（有 Web 页面时）
 
