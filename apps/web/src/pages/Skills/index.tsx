@@ -14,13 +14,13 @@ type SkillLink = {
 
 const SKILLS: SkillLink[] = [
   {
-    path: '/skill/demos/tech-demo',
+    path: '/skills/demos/tech-demo',
     title: 'tech-demo',
     icon: <IconStack size={22} />,
     description: '在 study-lab 中编写可运行、可观察的 tech 领域学习 demo 的 agent skill。',
   },
   {
-    path: '/skill/demos/create-realm-skill',
+    path: '/skills/demos/create-realm-skill',
     title: 'create-realm-skill',
     icon: <IconRobot size={22} />,
     description: '为新的学习领域（realm）搭建 <realm>-demo skill 的脚手架规范。',
@@ -28,7 +28,7 @@ const SKILLS: SkillLink[] = [
 ];
 
 /**
- * Agent Skill 文档总览页（顶层 `/skill`）：列出仓库内的各 agent skill，
+ * Agent Skill 文档总览页（顶层 `/skills`）：列出仓库内的各 agent skill，
  * 每个 skill 为独立路由，可从侧边栏或卡片进入查看其原文说明。
  */
 const SkillDocs = () => (

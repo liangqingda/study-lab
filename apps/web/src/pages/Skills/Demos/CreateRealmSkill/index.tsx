@@ -4,7 +4,7 @@ import createRealmSkill from '../../../../../../../.agents/skills/create-realm-s
 import SkillMarkdown from '../../components/SkillMarkdown';
 
 /**
- * create-realm-skill 文档页（`/skill/demos/create-realm-skill`）。
+ * create-realm-skill 文档页（`/skills/demos/create-realm-skill`）。
  */
 const CreateRealmSkillPage = () => (
   <Container py="xl" size="lg">

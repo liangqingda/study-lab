@@ -4,7 +4,7 @@ import techDemoSkill from '../../../../../../../.agents/skills/tech-demo/SKILL.m
 import SkillMarkdown from '../../components/SkillMarkdown';
 
 /**
- * tech-demo skill 文档页（`/skill/demos/tech-demo`）。
+ * tech-demo skill 文档页（`/skills/demos/tech-demo`）。
  */
 const TechDemoSkillPage = () => (
   <Container py="xl" size="lg">
