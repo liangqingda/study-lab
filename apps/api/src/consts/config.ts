@@ -11,11 +11,6 @@ const ENVIRONMENT = z.object({
   CORS_ORIGINS: z.string().optional(),
   DATABASE_URL: z.string().trim().min(1).optional(),
   REDIS_URL: z.string().trim().min(1).default('redis://127.0.0.1:6379'),
-  /*
-   * 生产态前端静态资源目录（apps/web/dist）。仅在 NODE_ENV=production 时生效，
-   * 由 API 一并托管 SPA；未设置时调用方回退到相对 __dirname 的默认路径。
-   */
-  WEB_DIST_DIR: z.string().trim().min(1).optional(),
 });
 
 export type AppConfig = {
@@ -25,7 +20,6 @@ export type AppConfig = {
   corsOrigins: string[];
   databaseUrl?: string;
   redisUrl: string;
-  webDistDir?: string;
 };
 
 export const readConfig = (env: NodeJS.ProcessEnv = process.env): AppConfig => {
@@ -71,6 +65,5 @@ export const readConfig = (env: NodeJS.ProcessEnv = process.env): AppConfig => {
     corsOrigins: CORS_ORIGINS,
     databaseUrl: RESULT.data.DATABASE_URL,
     redisUrl: RESULT.data.REDIS_URL,
-    webDistDir: RESULT.data.WEB_DIST_DIR,
   };
 };
