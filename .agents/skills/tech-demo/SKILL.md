@@ -70,12 +70,15 @@ description: Implement runnable, observable learning demos in the study-lab work
 ## 学习路径与侧边栏（强制）
 
 - 学习路径是独立设计的技术学习大纲，按前置知识、基础、核心机制、进阶、工程实践与综合应用组织；不能根据现有 Demo 清单拼接或限制覆盖范围。Demo 仅为某个知识点的独立实验，不属于路径上的必修项目，不要求一一对应或互相覆盖。
-- 除 Skills 外，每个技术分类必须显式提供 `pages/Tech/<分类>/learning-path.ts`，导出纯字面量 `learningPath`（不 import）。字段为 `label`、`description`、`steps`；每步必须包含 `{ id, kind, title, summary, content }`，禁止 `demo`、`demoPath`。id 全局稳定唯一；kind 为 concept（知识阶段）或 lab（独立综合实践）；content 为可直接阅读的 Markdown。
-- 每个阶段至少包含学习目标、前置知识、核心知识与学习顺序、独立练习、验收标准和权威资料链接。先按完整技术能力设计路线，再写内容；不能因缺少 Demo 省略必需知识。扩展技术范围时核对官方资料，说明版本相关边界。
+- 除 Skills 外，每个技术分类必须显式提供 `pages/Tech/<分类>/learning-path.ts`，导出纯字面量 `learningPath`（不 import）。字段为 `label`、`description`、`steps`；每步必须包含 `{ id, kind, title, summary, contentFile }`，禁止 `demo`、`demoPath`。id 全局稳定唯一；kind 为 concept（知识阶段）或 lab（独立综合实践）；contentFile 指向本分类 `notes/*.md`，生成器加载为正文，不能引用分类外文件。
+- 每个阶段是可直接学习的详细技术笔记，必须使用 take-notes 编写，按 review-note 在主题范围内评审并修补（最多两轮）。不能以学习目标、几条概念简介、外部链接或现有 Demo 代替讲解。
+- 每篇覆盖术语与定义、逐步机制、最小环境、完整可运行实验、先预测提示、预期结果及原因、错误示例与修正、适用边界、2–5 道带验收标准的练习、官方来源及版本。并发示例用时序表明确会话和提交点，选择多种主要工具时需分别达到可用深度。教学替身与真实协议/依赖实验明确区分，未执行的真实数据库、Redis 或 SDK 互通不写成已验证。
+- 本文不要求新笔记绑定 Demo。保持阶段 id 稳定；按完整技术能力设计路线，不能因现有 Demo 少就省略必需知识。版本行为以官方资料核对，尤其 MCP 新旧代际不能混写。
+- 正文放独立 Markdown 文件，按 `contentFile` 引用；支持 Mermaid 围栏绘制流程与时序图，只在能帮助推导时使用。阅读器提供章节目录、代码和局部表格滚动；图示按需加载，失败保留文字，不影响正文。
 - 每个分类侧边栏首项为「学习路径」，下方只列 Demo。概念内容不混进 Demo 菜单；使用 `ConceptPageLayout` 的已有概念页由生成器过滤。新增 Demo 使用 `DemoLayout`，不附加学习阶段进度或上下阶段导航。
 - 分类首页使用 `CategoryLearningPath`；「开始学习」使用 `LearningPreview` 按阶段 id 展示独立 content，不能打开 Demo 路由作为课程内容。正文底部提供阶段切换、主动完成与熟练度，并与总览同步；关闭后保留总览 URL 与位置。
 - 新增 Demo 只自动加入 Demo 菜单，不改变学习大纲，无需在 steps 登记。新增技术必须先设计独立学习路径，生成器会拒绝无大纲、空阶段、重复 id、缺少内容、非法 kind 和绑定 Demo 的配置；没有 Demo 的技术也可以仅提供大纲。
-- 不手写总览和菜单，不编辑 generated 文件。修改后运行 `pnpm --filter @study-lab/web gen:routes`、`node --test apps/web/scripts/gen-routes.test.mjs`、类型检查与构建，并在真实浏览器验证总览、独立阶段弹窗、阶段切换和进度同步。
+- 不手写总览和菜单，不编辑 generated 文件。修改后运行 `pnpm --filter @study-lab/web gen:routes`、`node --test apps/web/scripts/gen-routes.test.mjs`、`node apps/web/scripts/check-learning-notes.mjs`、类型检查与构建，并在真实浏览器验证总览、独立阶段弹窗、阶段切换和进度同步。
 
 ## 前端页面设计（有 Web 页面时）
 

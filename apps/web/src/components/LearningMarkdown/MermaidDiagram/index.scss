@@ -1,0 +1,21 @@
+.diagram {
+  margin: 20px 0;
+  padding: 16px;
+  overflow-x: auto;
+  border: 1px solid var(--demo-line);
+  border-radius: 8px;
+  background: #fff;
+  color: #212529;
+}
+
+.diagram svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: auto;
+}
+
+.diagram details {
+  margin-top: 12px;
+  font-size: 13px;
+}

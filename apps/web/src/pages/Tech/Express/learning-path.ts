@@ -1,6 +1,6 @@
 /* eslint-disable liangqingda-react/filename-naming-convention */
 /**
- * Express 独立技术学习大纲；阶段由知识依赖与能力目标设计，与 Demo 清单无关联。
+ * Express 独立学习路径；详细笔记位于 notes/，不依赖 Demo 清单。
  */
 export const learningPath = {
   label: 'Express',
@@ -12,64 +12,56 @@ export const learningPath = {
       kind: 'concept',
       title: 'Node.js 与 Express 请求模型',
       summary: '先理解运行环境，再理解框架处理一次请求的过程。',
-      content:
-        '## 学习目标\n\n先理解运行环境，再理解框架处理一次请求的过程。\n\n## 前置知识\n\n已具备该技术所需的入门背景。\n\n## 核心知识与学习顺序\n\n1. Express 提供基于 Node.js HTTP 的路由和中间件组织方式，不负责替代数据库或全部业务架构。\n\n2. 事件循环处理异步任务，CPU 密集计算会阻塞其他请求；认识 app、req、res 与 next 的职责。\n\n## 独立练习\n\n从空目录启动最小 Express 服务，添加健康检查并观察两个并发请求。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能描述监听、匹配、处理和响应的流程，并说明哪些操作会阻塞进程。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Express 官方学习资料](https://expressjs.com/en/guide/routing/)\n',
+      contentFile: 'notes/foundations.md',
     },
     {
       id: 'express-curriculum-routing',
       kind: 'concept',
       title: '路由、参数与 Router',
       summary: '把 URL 与处理器组织成清晰的资源边界。',
-      content:
-        '## 学习目标\n\n把 URL 与处理器组织成清晰的资源边界。\n\n## 前置知识\n\n先完成「Node.js 与 Express 请求模型」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 路由由方法与路径匹配共同决定；路径参数、查询参数、请求体来自不同位置。\n\n2. Router 提供可挂载的路由组；关注挂载前缀与声明顺序。路径模式需对照所使用的 Express 版本文档。\n\n## 独立练习\n\n自行创建 /articles 与 /articles/:id 路由，比较命中、未命中和非法 id。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能解释请求最终由哪个处理器响应，不把查询字符串当作路由路径的一部分。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Express 官方学习资料](https://expressjs.com/en/guide/routing/)\n',
+      contentFile: 'notes/routing.md',
     },
     {
       id: 'express-curriculum-middleware',
       kind: 'concept',
       title: '中间件执行与请求边界',
       summary: '掌握顺序、终止、转交和资源清理。',
-      content:
-        '## 学习目标\n\n掌握顺序、终止、转交和资源清理。\n\n## 前置知识\n\n先完成「路由、参数与 Router」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 中间件按匹配顺序执行；next 转交控制权，发送响应结束响应流程，二者不能随意重复。\n\n2. 理解应用级、路由级、内置和第三方中间件；请求体解析只解析声明格式，不验证业务数据。\n\n## 独立练习\n\n写一个记录耗时的中间件与一个校验中间件，推演正常、拒绝与未调用 next 的分支。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能定位请求挂起、重复响应和顺序错误，并在响应结束事件记录耗时。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Express 官方学习资料](https://expressjs.com/en/guide/routing/)\n',
+      contentFile: 'notes/middleware.md',
     },
     {
       id: 'express-curriculum-validation',
       kind: 'concept',
       title: '输入校验、响应设计与权限边界',
       summary: '将不可信输入变为明确的业务参数。',
-      content:
-        '## 学习目标\n\n将不可信输入变为明确的业务参数。\n\n## 前置知识\n\n先完成「中间件执行与请求边界」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 所有来自请求的内容都应按契约校验；区分格式错误、资源不存在和权限不足。\n\n2. 响应方法负责序列化与发送，状态码、Content-Type 和主体需要一致；鉴权之后仍要检查具体资源授权。\n\n## 独立练习\n\n设计文章创建接口的请求与响应契约，列出成功及三种失败输入。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n拒绝未知或非法字段的策略明确；不会回传密钥、内部错误堆栈或未经筛选的数据。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Express 官方学习资料](https://expressjs.com/en/guide/routing/)\n',
+      contentFile: 'notes/validation.md',
     },
     {
       id: 'express-curriculum-errors',
       kind: 'concept',
       title: '异步错误与统一错误处理',
       summary: '确保每条失败路径都能被观察和正确结束。',
-      content:
-        '## 学习目标\n\n确保每条失败路径都能被观察和正确结束。\n\n## 前置知识\n\n先完成「输入校验、响应设计与权限边界」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 错误处理中间件使用四个参数；区分预期业务失败与意外异常。Express 5 对返回 Promise 的拒绝会自动转入错误链，游离回调仍需显式处理。\n\n2. 响应发送后发生错误不能再发送第二份响应；日志保留排查上下文，客户端得到稳定且适当的错误信息。\n\n## 独立练习\n\n推演同步 throw、返回 Promise 拒绝、异步回调错误与已发响应后失败四条路径。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n每条路径都能解释如何到达错误处理器，且不会重复响应或泄露内部信息。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Express 官方学习资料](https://expressjs.com/en/guide/routing/)\n',
+      contentFile: 'notes/errors.md',
     },
     {
       id: 'express-curriculum-data-services',
       kind: 'concept',
       title: '数据访问、分层与外部依赖',
       summary: '在业务边界内组织异步数据操作。',
-      content:
-        '## 学习目标\n\n在业务边界内组织异步数据操作。\n\n## 前置知识\n\n先完成「异步错误与统一错误处理」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 路由负责协议适配，业务函数表达规则；只在复用与测试需要时提取模块，不机械堆叠分层。\n\n2. 使用连接池并限定事务范围；超时、取消和 finally 清理必须覆盖失败路径，不能让一个请求永久占有资源。\n\n## 独立练习\n\n用注入的存储替身实现文章更新，分别模拟不存在、保存失败与正常更新。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n业务逻辑可脱离 HTTP 测试，失败后没有泄漏连接或遗留未完成事务。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Express 官方学习资料](https://expressjs.com/en/guide/routing/)\n',
+      contentFile: 'notes/data-services.md',
     },
     {
       id: 'express-curriculum-testing-security',
       kind: 'concept',
       title: '测试、安全配置与可观测性',
       summary: '用证据保证接口行为及运行边界。',
-      content:
-        '## 学习目标\n\n用证据保证接口行为及运行边界。\n\n## 前置知识\n\n先完成「数据访问、分层与外部依赖」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 区分业务单元测试与 HTTP 集成测试，验证状态、首部、主体和副作用；默认不依赖真实数据库。\n\n2. 限制请求体大小，明确跨源与代理信任配置，避免注入与敏感日志；使用请求标识和结构化日志关联操作。\n\n## 独立练习\n\n为文章接口建立成功、输入失败、授权失败和依赖失败的测试矩阵。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n测试可重复且不污染外部数据，能从失败日志定位到同一次请求。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Express 官方学习资料](https://expressjs.com/en/guide/routing/)\n',
+      contentFile: 'notes/testing-security.md',
     },
     {
       id: 'express-curriculum-project',
       kind: 'lab',
       title: '综合实践：交付一个可维护服务',
       summary: '完成从启动到优雅退出的服务闭环。',
-      content:
-        '## 学习目标\n\n完成从启动到优雅退出的服务闭环。\n\n## 前置知识\n\n先完成「测试、安全配置与可观测性」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 配置通过环境读取并校验，健康检查反映服务可用状态；区分存活与就绪需求。\n\n2. 关闭时停止接收新请求，等待在途操作并释放连接；上线前审查依赖版本、反向代理与错误响应。\n\n## 独立练习\n\n独立实现小型文章服务，包含路由、校验、业务函数、错误处理、日志和测试。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n提交接口说明、验证记录、配置示例与退出策略，能说明每一层职责。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Express 官方学习资料](https://expressjs.com/en/guide/routing/)\n',
+      contentFile: 'notes/project.md',
     },
   ],
 } as const;

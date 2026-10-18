@@ -1,6 +1,6 @@
 /* eslint-disable liangqingda-react/filename-naming-convention */
 /**
- * MCP 独立技术学习大纲；阶段由知识依赖与能力目标设计，与 Demo 清单无关联。
+ * MCP 独立学习路径；详细笔记位于 notes/，不依赖 Demo 清单。
  */
 export const learningPath = {
   label: 'MCP',
@@ -12,64 +12,56 @@ export const learningPath = {
       kind: 'concept',
       title: '协议定位与上下文边界',
       summary: '理解 MCP 解决的集成问题与不负责的部分。',
-      content:
-        '## 学习目标\n\n理解 MCP 解决的集成问题与不负责的部分。\n\n## 前置知识\n\n已具备该技术所需的入门背景。\n\n## 核心知识与学习顺序\n\n1. MCP 标准化 AI 应用与外部能力之间的通信；它不是模型本身，也不替应用决定所有业务工作流。\n\n2. 区分模型推理、应用编排、协议通信和外部系统授权；接入同一协议不代表所有客户端支持所有能力。\n\n## 独立练习\n\n为一个文档问答场景画出模型、应用、协议与文档系统的边界。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能说明何时使用 MCP，以及直接 API 调用与协议接入各自的成本。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[MCP 官方学习资料](https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture)\n',
+      contentFile: 'notes/purpose.md',
     },
     {
       id: 'mcp-curriculum-architecture',
       kind: 'concept',
-      title: 'Host、Client、Server 与会话生命周期',
-      summary: '理解连接如何建立以及能力如何协商。',
-      content:
-        '## 学习目标\n\n理解连接如何建立以及能力如何协商。\n\n## 前置知识\n\n先完成「协议定位与上下文边界」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. Host 组织模型交互和权限，Client 管理与 Server 的协议连接，Server 提供能力；多个服务器不等于共享同一授权边界。\n\n2. JSON-RPC 描述请求、响应和通知；学习初始化、协议版本与能力协商、运行和关闭，不能假设连接成功就能调用任意能力。\n\n## 独立练习\n\n画出初始化到第一次能力调用的消息顺序，标注请求 id 与不需要响应的通知。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能区分角色和消息类型，并解释不兼容版本或未协商能力时的处理。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[MCP 官方学习资料](https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture)\n',
+      title: 'Host、Client、Server 与请求生命周期',
+      summary: '理解角色边界、新旧版本模型与请求如何关联。',
+      contentFile: 'notes/architecture.md',
     },
     {
       id: 'mcp-curriculum-primitives',
       kind: 'concept',
       title: 'Tools、Resources 与 Prompts',
       summary: '用控制权和输入输出区分三类能力。',
-      content:
-        '## 学习目标\n\n用控制权和输入输出区分三类能力。\n\n## 前置知识\n\n先完成「Host、Client、Server 与会话生命周期」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. Tools 表达可调用操作，Resources 表达可读取的上下文，Prompts 表达可复用提示模板；三者不能只按是否包含文本分类。\n\n2. 理解发现与调用、资源 URI 与模板、提示参数；能力描述是模型与应用选择行为的重要输入，必须准确表达副作用。\n\n## 独立练习\n\n为知识库分别设计搜索工具、文档资源和总结模板，写出输入及结果形态。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能说明谁决定使用能力，区分读取上下文和执行写操作。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[MCP 官方学习资料](https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture)\n',
+      contentFile: 'notes/primitives.md',
     },
     {
       id: 'mcp-curriculum-transport',
       kind: 'concept',
       title: '本地与远程传输、连接与恢复',
       summary: '把协议消息与承载方式分开理解。',
-      content:
-        '## 学习目标\n\n把协议消息与承载方式分开理解。\n\n## 前置知识\n\n先完成「Tools、Resources 与 Prompts」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. stdio 适合应用启动本地子进程，标准输出承担协议消息时不能混入普通日志；日志应走标准错误等独立通道。\n\n2. Streamable HTTP 用于远程通信，学习请求、响应、会话和断线处理；是否支持可选机制需要对照协商能力与所选协议版本。\n\n## 独立练习\n\n为本地文件工具和远程服务分别设计启动、日志、会话关闭与失败恢复流程。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能定位消息格式错误与传输故障，不把旧 HTTP+SSE 传输直接当作当前远程方案。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[MCP 官方学习资料](https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture)\n',
+      contentFile: 'notes/transport.md',
     },
     {
       id: 'mcp-curriculum-security',
       kind: 'concept',
       title: '授权、信任边界与输入输出安全',
       summary: '防止把接入能力误当作用户授权。',
-      content:
-        '## 学习目标\n\n防止把接入能力误当作用户授权。\n\n## 前置知识\n\n先完成「本地与远程传输、连接与恢复」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 远程访问需明确客户端、授权服务与资源服务的关系；按目标服务和权限范围校验令牌，避免令牌透传。\n\n2. 工具描述、资源文本和工具结果都可能含不可信指令；应用需限制权限、确认有副作用的操作，并隔离凭据与敏感日志。\n\n## 独立练习\n\n审查一个读取文档并可发送邮件的集成，列出权限范围、用户确认点和提示注入入口。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能指出跨系统权限升级和敏感信息外泄的风险路径，并给出具体边界。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[MCP 官方学习资料](https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture)\n',
+      contentFile: 'notes/security.md',
     },
     {
       id: 'mcp-curriculum-implementation',
       kind: 'concept',
       title: '实现能力、契约与错误语义',
       summary: '设计可验证、可维护的协议服务。',
-      content:
-        '## 学习目标\n\n设计可验证、可维护的协议服务。\n\n## 前置知识\n\n先完成「授权、信任边界与输入输出安全」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 用明确的输入 schema、结构化结果和可理解描述定义能力；区分协议层错误与工具执行失败，不用空字符串掩盖错误。\n\n2. 连接客户端和实际执行者之间需有超时、取消、幂等和资源清理策略；选择 SDK 时核对协议版本及支持的能力。\n\n## 独立练习\n\n独立设计一个只读搜索能力的完整契约，包括正常、空结果、非法输入和上游超时。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n输入边界与错误分类明确，失败可观察且不会泄露凭据。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[MCP 官方学习资料](https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture)\n',
+      contentFile: 'notes/implementation.md',
     },
     {
       id: 'mcp-curriculum-extensions',
       kind: 'concept',
       title: '可选能力、交互扩展与兼容性',
       summary: '按实际需求渐进引入更复杂的能力。',
-      content:
-        '## 学习目标\n\n按实际需求渐进引入更复杂的能力。\n\n## 前置知识\n\n先完成「实现能力、契约与错误语义」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 了解订阅、日志、进度、取消及客户端侧交互能力的用途；具体支持以协议版本、能力协商和客户端实现为准。\n\n2. 双向交互会增加权限与生命周期复杂度；不要在未声明、未授权或不支持时直接使用扩展能力。\n\n## 独立练习\n\n为长耗时任务设计进度和取消流程，并列出客户端不支持时的降级路径。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能给出最小必要能力集与兼容矩阵，清楚区分必需、可选和尚不支持的行为。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[MCP 官方学习资料](https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture)\n',
+      contentFile: 'notes/extensions.md',
     },
     {
       id: 'mcp-curriculum-project',
       kind: 'lab',
       title: '综合实践：集成设计与兼容性审阅',
       summary: '串联发现、调用、失败与安全验证。',
-      content:
-        '## 学习目标\n\n串联发现、调用、失败与安全验证。\n\n## 前置知识\n\n先完成「可选能力、交互扩展与兼容性」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 以具体业务目标选择最小能力，按初始化、发现、调用、结果处理、关闭的顺序验证。\n\n2. 测试正常和异常路径、授权拒绝、断线、取消、版本不兼容及不可信内容；记录客户端与服务端版本。\n\n## 独立练习\n\n交付一个知识库集成的架构图、能力契约、消息时序与安全测试矩阵。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n每个权限有业务理由，每条错误有观察点，能够证明不会把外部内容当作高优先级指令。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[MCP 官方学习资料](https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture)\n',
+      contentFile: 'notes/project.md',
     },
   ],
 } as const;

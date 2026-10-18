@@ -39,6 +39,12 @@
   letter-spacing: 0;
 }
 
+.content h2,
+.content h3,
+.content h4 {
+  scroll-margin-top: 80px;
+}
+
 .content p {
   margin: 10px 0;
 }

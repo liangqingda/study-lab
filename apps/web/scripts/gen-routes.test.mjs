@@ -118,3 +118,27 @@ for (const [name, steps] of [
       await assert.rejects(generateRoutes(root));
     }));
 }
+
+test('Markdown 笔记独立读取且修改后不会复用旧内容', () =>
+  fixture(async (root, put) => {
+    const stage = { ...step('note'), contentFile: 'notes/first.md' };
+    delete stage.content;
+    await put('Tech/Example/learning-path.ts', configSource([stage]));
+    await put('Tech/Example/notes/first.md', '## 初版\n\nfirst revision');
+    await generateRoutes(root);
+    const output = path.join(root, 'src/generated/learning-paths.ts');
+    assert.match(await readFile(output, 'utf8'), /first revision/);
+    await put('Tech/Example/notes/first.md', '## 修订版\n\nsecond revision');
+    await generateRoutes(root);
+    assert.match(await readFile(output, 'utf8'), /second revision/);
+  }));
+
+for (const note of ['notes/missing.md', '../outside.md']) {
+  test(`拒绝不存在或越界的笔记 ${note}`, () =>
+    fixture(async (root, put) => {
+      const stage = { ...step('note'), contentFile: note };
+      delete stage.content;
+      await put('Tech/Example/learning-path.ts', configSource([stage]));
+      await assert.rejects(generateRoutes(root));
+    }));
+}

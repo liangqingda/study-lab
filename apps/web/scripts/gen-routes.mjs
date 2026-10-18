@@ -458,9 +458,10 @@ export const generateRoutes = async (projectRoot = rootDir) => {
     const compiled = ts.transpileModule(source, {
       compilerOptions: { module: ts.ModuleKind.ESNext },
     }).outputText;
-    const { learningPath } = await import(
+    const loaded = await import(
       `data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`
     );
+    const learningPath = structuredClone(loaded.learningPath);
     if (
       !learningPath?.label ||
       !learningPath.description ||
@@ -471,6 +472,25 @@ export const generateRoutes = async (projectRoot = rootDir) => {
       );
     }
     for (const step of learningPath.steps) {
+      if (step.contentFile) {
+        const categoryDirectory = path.join(
+          pagesDir,
+          config.realm,
+          config.category,
+        );
+        const notePath = path.resolve(categoryDirectory, step.contentFile);
+        if (
+          !notePath.startsWith(`${categoryDirectory}${path.sep}`) ||
+          !notePath.endsWith('.md')
+        ) {
+          throw new Error(
+            `${categoryPath}: 笔记必须是本分类内的 Markdown 文件`,
+          );
+        }
+        step.content = await readFile(notePath, 'utf8');
+        delete step.contentFile;
+      }
+
       if (
         !step.id ||
         stepIds.has(step.id) ||

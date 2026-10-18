@@ -1,6 +1,6 @@
 /* eslint-disable liangqingda-react/filename-naming-convention */
 /**
- * Redis 独立技术学习大纲；阶段由知识依赖与能力目标设计，与 Demo 清单无关联。
+ * Redis 独立学习路径；详细笔记位于 notes/，不依赖 Demo 清单。
  */
 export const learningPath = {
   label: 'Redis',
@@ -12,64 +12,56 @@ export const learningPath = {
       kind: 'concept',
       title: '键空间、命令与过期语义',
       summary: '理解 Redis 的数据组织与使用边界。',
-      content:
-        '## 学习目标\n\n理解 Redis 的数据组织与使用边界。\n\n## 前置知识\n\n已具备该技术所需的入门背景。\n\n## 核心知识与学习顺序\n\n1. Redis 以键组织不同类型的值；命令操作数据结构，不能把它仅理解为一个字符串字典。\n\n2. 认识连接、数据库编号、键命名和 TTL；过期与内存淘汰是两种机制，持久化能力不等于所有写入都零丢失。\n\n## 独立练习\n\n设计验证码、会话和商品缓存三类键名，说明数据类型与生命周期。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能解释一个键为什么消失，并区分业务有效期与资源不足触发的淘汰。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Redis 官方学习资料](https://redis.io/docs/latest/develop/)\n',
+      contentFile: 'notes/model.md',
     },
     {
       id: 'redis-curriculum-structures',
       kind: 'concept',
       title: '核心数据结构与场景选择',
       summary: '按访问模式选择结构并估算复杂度。',
-      content:
-        '## 学习目标\n\n按访问模式选择结构并估算复杂度。\n\n## 前置知识\n\n先完成「键空间、命令与过期语义」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. String 适合计数和简单值，Hash 表达字段集合，List 表达有序序列，Set 表达唯一成员，Sorted Set 表达带分数排序。\n\n2. 了解 Bitmap、HyperLogLog 和地理位置查询的适用范围；选择结构时考虑基数、命令复杂度与误差要求。\n\n## 独立练习\n\n分别设计阅读计数、用户资料、去重集合与排行榜的键和值。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能说明选择依据，避免把所有数据塞进一个巨大 JSON 或使用全量扫描命令。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Redis 官方学习资料](https://redis.io/docs/latest/develop/)\n',
+      contentFile: 'notes/structures.md',
     },
     {
       id: 'redis-curriculum-atomicity',
       kind: 'concept',
       title: '原子命令、流水线与脚本',
       summary: '区分减少往返与保证并发正确性。',
-      content:
-        '## 学习目标\n\n区分减少往返与保证并发正确性。\n\n## 前置知识\n\n先完成「核心数据结构与场景选择」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 单条命令的原子执行不保证多命令业务流程原子；Pipeline 减少网络往返，但本身不提供事务隔离。\n\n2. MULTI/EXEC 组织命令执行，WATCH 支持乐观并发检查；脚本可把检查与修改放在一次原子执行中，但长脚本会阻塞服务。\n\n## 独立练习\n\n推演两个请求执行先 GET 再 DECR 的竞争，再比较原子计数、WATCH 与脚本方案。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能指出竞争窗口，不把 Redis 事务误认为支持关系数据库式的任意回滚。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Redis 官方学习资料](https://redis.io/docs/latest/develop/)\n',
+      contentFile: 'notes/atomicity.md',
     },
     {
       id: 'redis-curriculum-caching',
       kind: 'concept',
       title: '缓存模式、一致性与故障策略',
       summary: '把命中率优化和数据正确性分开设计。',
-      content:
-        '## 学习目标\n\n把命中率优化和数据正确性分开设计。\n\n## 前置知识\n\n先完成「原子命令、流水线与脚本」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. Cache-aside 先查缓存、未命中再读源并回填；更新时需要分析数据库与缓存操作之间的竞争。\n\n2. 区分穿透、击穿和雪崩；负缓存、请求合并、过期抖动、降级各解决不同问题。TTL 只限制陈旧时间，不能自动保证强一致。\n\n## 独立练习\n\n画出读缓存、更新源数据和删除缓存交错执行的时间线，并设计缓存不可用时的策略。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能说明允许的陈旧窗口和源站容量，不把加锁或延迟双删当成通用正确性证明。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Redis 官方学习资料](https://redis.io/docs/latest/develop/)\n',
+      contentFile: 'notes/caching.md',
     },
     {
       id: 'redis-curriculum-coordination',
       kind: 'concept',
       title: '限流、锁与消息处理',
       summary: '明确协调原语在失败和重试时的边界。',
-      content:
-        '## 学习目标\n\n明确协调原语在失败和重试时的边界。\n\n## 前置知识\n\n先完成「缓存模式、一致性与故障策略」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 限流算法包括固定窗口、滑动窗口和令牌桶，各有突发与精度权衡。\n\n2. 锁需要唯一持有者、有限租期与原子释放；租约到期不代表旧持有者停止工作。Pub/Sub 缺少离线持久重放，Streams 支持消费组与确认，但业务仍需处理重复。\n\n## 独立练习\n\n设计单用户限流与任务消费的失败时间线，分析暂停、超时、重试和重复执行。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能解释何时需要幂等与 fencing，不能承诺分布式锁或消息队列天然实现恰好一次业务执行。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Redis 官方学习资料](https://redis.io/docs/latest/develop/)\n',
+      contentFile: 'notes/coordination.md',
     },
     {
       id: 'redis-curriculum-durability',
       kind: 'concept',
       title: 'RDB、AOF 与故障恢复',
       summary: '根据恢复目标选择持久化策略。',
-      content:
-        '## 学习目标\n\n根据恢复目标选择持久化策略。\n\n## 前置知识\n\n先完成「限流、锁与消息处理」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. RDB 保存时间点快照，AOF 记录写操作；理解快照周期、fsync 策略与重写过程的空间和延迟代价。\n\n2. 持久化、复制和备份作用不同；明确可接受的数据丢失窗口与恢复时间，而不是只检查开关是否启用。\n\n## 独立练习\n\n为纯缓存和不可轻易重建的数据分别制定持久化与恢复策略。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能说明进程故障、机器故障和误删除时各靠什么恢复，且有恢复演练步骤。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Redis 官方学习资料](https://redis.io/docs/latest/develop/)\n',
+      contentFile: 'notes/durability.md',
     },
     {
       id: 'redis-curriculum-scaling',
       kind: 'concept',
       title: '复制、Sentinel、Cluster 与性能',
       summary: '理解高可用和水平分片解决的不同问题。',
-      content:
-        '## 学习目标\n\n理解高可用和水平分片解决的不同问题。\n\n## 前置知识\n\n先完成「RDB、AOF 与故障恢复」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 复制提供副本，Sentinel 管理监控和故障转移，Cluster 使用哈希槽分片；故障转移不自动消除异步复制带来的丢写风险。\n\n2. 关注热键、大键、慢命令、连接数和内存碎片；Cluster 的多键操作通常要求键位于同一槽。\n\n## 独立练习\n\n画出单主副本与分片集群拓扑，为排行榜热键和大集合扫描提出观测及改进方案。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n能说明扩副本不能直接分散同一个写热点，并识别跨槽限制。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Redis 官方学习资料](https://redis.io/docs/latest/develop/)\n',
+      contentFile: 'notes/scaling.md',
     },
     {
       id: 'redis-curriculum-project',
       kind: 'lab',
       title: '综合实践：设计可降级缓存服务',
       summary: '从业务需求验证数据、并发与运维方案。',
-      content:
-        '## 学习目标\n\n从业务需求验证数据、并发与运维方案。\n\n## 前置知识\n\n先完成「复制、Sentinel、Cluster 与性能」，或能说明该阶段的验收要求。\n\n## 核心知识与学习顺序\n\n1. 先声明源数据、允许陈旧时间、峰值流量和故障预算，再决定类型、TTL、原子操作与部署方式。\n\n2. 定义缓存命中率、回源量、延迟和内存的观测指标，测试失效和不可用，而非只测正常命中。\n\n## 独立练习\n\n为商品详情与库存展示设计缓存方案，推演缓存失效、Redis 故障与并发更新。\n\n先预测行为或画出执行过程，再用自己编写的最小例子核对。\n\n## 验收标准\n\n交付键设计、并发时间线、故障降级和容量估算；不把缓存库存直接等同于交易库存。\n\n尝试不看资料复述机制，并解释一个反例；能完成练习并说明结果原因后，再主动标记完成。\n\n## 延伸阅读\n\n[Redis 官方学习资料](https://redis.io/docs/latest/develop/)\n',
+      contentFile: 'notes/project.md',
     },
   ],
 } as const;

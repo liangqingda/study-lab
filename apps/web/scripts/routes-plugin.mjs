@@ -13,7 +13,7 @@ export const routesPlugin = (root) => ({
     const update = (file) => {
       if (
         !file.replaceAll(path.sep, '/').startsWith(pages) ||
-        !/\.(tsx|jsx|ts|js)$/.test(file)
+        !/\.(tsx|jsx|ts|js|md)$/.test(file)
       ) {
         return;
       }

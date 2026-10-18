@@ -1,9 +1,8 @@
 import { Modal } from '@mantine/core';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 
 import type { LearningPathInfo } from '@/hooks/useLearningPath';
 import ConceptPageLayout from '@/components/ConceptPageLayout';
+import LearningMarkdown from '@/components/LearningMarkdown';
 
 import { LearningPreviewContext } from './Context/index';
 
@@ -52,9 +51,7 @@ const LearningPreview = ({
             key={step.id}
             title={step.title}
           >
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {step.content}
-            </ReactMarkdown>
+            <LearningMarkdown content={step.content} />
           </ConceptPageLayout>
         </LearningPreviewContext>
       ) : null}
