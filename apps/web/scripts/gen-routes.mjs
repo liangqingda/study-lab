@@ -10,6 +10,12 @@ const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const pageFileExtensionPattern = /\.(tsx|jsx|ts|js)$/;
 const ignoredSegmentNames = new Set(['components', 'constants', 'errors', 'hooks', 'types', 'utils']);
 
+/**
+ * 仅出现在侧边栏、不出现在 header 领域切换中的顶层领域（按路由首段 kebab 名）。
+ * 例：Skills 文档只从侧边栏进入，避免 header 领域下拉被非学习领域占用。
+ */
+const SIDEBAR_ONLY_REALMS = new Set(['skills']);
+
 const compareByName = (left, right) => left.name.localeCompare(right.name);
 
 const jsString = (value) => JSON.stringify(value);
@@ -418,6 +424,7 @@ export const generateRoutes = async (projectRoot = rootDir) => {
       key: topLevelKey,
       label: topLevelSegment,
       path: topLevelRoute?.path ?? topLevelRoutes[0].path,
+      sidebarOnly: SIDEBAR_ONLY_REALMS.has(topLevelSegment),
     });
 
     sidebarMenusByTopLevel[topLevelKey] = createSidebarMenus(topLevelRoutes);
@@ -456,6 +463,8 @@ export type DemoMenuItem = {
   label: string;
   path?: string;
   children?: DemoMenuItem[];
+  /** 仅进侧边栏的领域（如 skills），不出现在 header 领域切换中。 */
+  sidebarOnly?: boolean;
 };
 
 export const defaultRoutePath = ${jsString(defaultRoutePath)};

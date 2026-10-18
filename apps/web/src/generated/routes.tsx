@@ -3,12 +3,12 @@
 import { lazy } from "react";
 import type { ComponentType } from "react";
 
-const SkillPage = lazy(() => import("@/pages/Skill/index"));
-const SkillDemosCreateRealmSkillPage = lazy(
-  () => import("@/pages/Skill/Demos/CreateRealmSkill/index"),
+const SkillsPage = lazy(() => import("@/pages/Skills/index"));
+const SkillsDemosCreateRealmSkillPage = lazy(
+  () => import("@/pages/Skills/Demos/CreateRealmSkill/index"),
 );
-const SkillDemosTechDemoPage = lazy(
-  () => import("@/pages/Skill/Demos/TechDemo/index"),
+const SkillsDemosTechDemoPage = lazy(
+  () => import("@/pages/Skills/Demos/TechDemo/index"),
 );
 const TechCssVerticalCenteringPage = lazy(
   () => import("@/pages/Tech/Css/VerticalCentering/index"),
@@ -54,31 +54,33 @@ export type DemoMenuItem = {
   label: string;
   path?: string;
   children?: DemoMenuItem[];
+  /** 仅进侧边栏的领域（如 skills），不出现在 header 领域切换中。 */
+  sidebarOnly?: boolean;
 };
 
-export const defaultRoutePath = "/skill";
+export const defaultRoutePath = "/skills";
 
 export const demoRoutes: DemoRoute[] = [
   {
-    path: "/skill",
-    menuKey: "/skill",
-    topLevelKey: "/skill",
-    label: "skill",
-    Component: SkillPage,
+    path: "/skills",
+    menuKey: "/skills",
+    topLevelKey: "/skills",
+    label: "skills",
+    Component: SkillsPage,
   },
   {
-    path: "/skill/demos/create-realm-skill",
-    menuKey: "/skill/demos/create-realm-skill",
-    topLevelKey: "/skill",
+    path: "/skills/demos/create-realm-skill",
+    menuKey: "/skills/demos/create-realm-skill",
+    topLevelKey: "/skills",
     label: "create-realm-skill",
-    Component: SkillDemosCreateRealmSkillPage,
+    Component: SkillsDemosCreateRealmSkillPage,
   },
   {
-    path: "/skill/demos/tech-demo",
-    menuKey: "/skill/demos/tech-demo",
-    topLevelKey: "/skill",
+    path: "/skills/demos/tech-demo",
+    menuKey: "/skills/demos/tech-demo",
+    topLevelKey: "/skills",
     label: "tech-demo",
-    Component: SkillDemosTechDemoPage,
+    Component: SkillsDemosTechDemoPage,
   },
   {
     path: "/tech/css/vertical-centering",
@@ -154,32 +156,34 @@ export const demoRoutes: DemoRoute[] = [
 
 export const headerMenus: DemoMenuItem[] = [
   {
-    key: "/skill",
-    label: "skill",
-    path: "/skill",
+    key: "/skills",
+    label: "skills",
+    path: "/skills",
+    sidebarOnly: true,
   },
   {
     key: "/tech",
     label: "tech",
     path: "/tech/css/vertical-centering",
+    sidebarOnly: false,
   },
 ];
 
 export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
-  "/skill": [
+  "/skills": [
     {
-      key: "group:/skill/demos",
+      key: "group:/skills/demos",
       label: "demos",
       children: [
         {
-          key: "/skill/demos/create-realm-skill",
+          key: "/skills/demos/create-realm-skill",
           label: "create-realm-skill",
-          path: "/skill/demos/create-realm-skill",
+          path: "/skills/demos/create-realm-skill",
         },
         {
-          key: "/skill/demos/tech-demo",
+          key: "/skills/demos/tech-demo",
           label: "tech-demo",
-          path: "/skill/demos/tech-demo",
+          path: "/skills/demos/tech-demo",
         },
       ],
     },
