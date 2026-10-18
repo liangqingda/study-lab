@@ -12,11 +12,17 @@ const CategoryLearningPathPage = lazy(
 const TechExpressErrorHandlingPage = lazy(
   () => import("@/pages/Tech/Express/ErrorHandling/index"),
 );
+const TechExpressIntroPage = lazy(
+  () => import("@/pages/Tech/Express/Intro/index"),
+);
 const TechExpressMiddlewarePage = lazy(
   () => import("@/pages/Tech/Express/Middleware/index"),
 );
 const TechExpressResponseMethodsPage = lazy(
   () => import("@/pages/Tech/Express/ResponseMethods/index"),
+);
+const TechExpressWrapUpPage = lazy(
+  () => import("@/pages/Tech/Express/WrapUp/index"),
 );
 const TechHttpUrlToPagePage = lazy(
   () => import("@/pages/Tech/Http/UrlToPage/index"),
@@ -68,6 +74,13 @@ export const demoRoutes: DemoRoute[] = [
     Component: TechExpressErrorHandlingPage,
   },
   {
+    path: "/tech/express/intro",
+    menuKey: "/tech/express/intro",
+    topLevelKey: "/tech",
+    label: "intro",
+    Component: TechExpressIntroPage,
+  },
+  {
     path: "/tech/express/middleware",
     menuKey: "/tech/express/middleware",
     topLevelKey: "/tech",
@@ -80,6 +93,13 @@ export const demoRoutes: DemoRoute[] = [
     topLevelKey: "/tech",
     label: "response-methods",
     Component: TechExpressResponseMethodsPage,
+  },
+  {
+    path: "/tech/express/wrap-up",
+    menuKey: "/tech/express/wrap-up",
+    topLevelKey: "/tech",
+    label: "wrap-up",
+    Component: TechExpressWrapUpPage,
   },
   {
     path: "/tech/http/url-to-page",
@@ -140,6 +160,11 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
           path: "/tech/express/error-handling",
         },
         {
+          key: "/tech/express/intro",
+          label: "intro",
+          path: "/tech/express/intro",
+        },
+        {
           key: "/tech/express/middleware",
           label: "middleware",
           path: "/tech/express/middleware",
@@ -148,6 +173,11 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
           key: "/tech/express/response-methods",
           label: "response-methods",
           path: "/tech/express/response-methods",
+        },
+        {
+          key: "/tech/express/wrap-up",
+          label: "wrap-up",
+          path: "/tech/express/wrap-up",
         },
       ],
     },

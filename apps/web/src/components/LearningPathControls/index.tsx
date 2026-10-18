@@ -39,14 +39,11 @@ const LearningPathControls = () => {
   const current = info.steps[currentIndex];
   const currentProgress = getProgress(current.id);
   const completed = Boolean(currentProgress.completed);
-  // 概念步骤没有对应 demo 页，导航只跳相邻的「实验」步骤。
-  const previousLabs = info.steps
-    .slice(0, currentIndex)
-    .filter((step) => step.demoPath);
-  const previousLab = previousLabs[previousLabs.length - 1];
-  const nextLab = info.steps
-    .slice(currentIndex + 1)
-    .find((step) => step.demoPath);
+  // 每一步都有对应页面，上/下导航直接跳相邻步骤。
+  const hasPrevious = currentIndex > 0;
+  const previous = info.steps[currentIndex - 1];
+  const hasNext = currentIndex < info.total - 1;
+  const next = info.steps[currentIndex + 1];
   const doneCount = info.steps.filter(
     (step) => getProgress(step.id).completed,
   ).length;
@@ -83,19 +80,19 @@ const LearningPathControls = () => {
       </Group>
 
       <Group className={styles.actions} gap="xs" wrap="nowrap">
-        {previousLabs.length > 0 ? (
+        {hasPrevious ? (
           <Button
             leftSection={<IconArrowLeft size={14} />}
-            onClick={() => goTo(previousLab.demoPath)}
+            onClick={() => goTo(previous.demoPath)}
             size="xs"
             variant="subtle"
           >
             上一模块
           </Button>
         ) : null}
-        {nextLab ? (
+        {hasNext ? (
           <Button
-            onClick={() => goTo(nextLab.demoPath)}
+            onClick={() => goTo(next.demoPath)}
             rightSection={<IconArrowRight size={14} />}
             size="xs"
             variant="subtle"

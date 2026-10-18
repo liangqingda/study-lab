@@ -9,11 +9,11 @@
  * 关键约定（区别于“demo 列表”）：
  * - `steps` 是**设计的教学路径**，不是 demo 目录的机械平铺：应有概念铺垫、
  *   动手实验与总结收尾，每步粒度按“这一模块该怎么学”来定，而非“有哪些 demo”。
- * - 每步 `kind`：`concept`（概念/讲解，通常不关联 demo）或 `lab`（动手实验，
- *   通常关联一个 demo）。纯概念步骤不写 `demo`，只在落地页展示与标记。
+ * - 每步 `kind`：`concept`（概念介绍页）或 `lab`（动手实验页）。
+ * - **每一步都必须有关联页面**：`demo` 对应本分类下的页面目录名（kebab-case，
+ *   如 `Middleware` → `middleware`）。lab 步骤关联实验页，concept 步骤关联
+ *   概念介绍页（如 `Intro` → `intro`）。前端据此推导「开始学习」进入的路由。
  * - 每步 `id` 必须稳定且唯一，作为完成状态与熟练度的本地存储 key。
- * - `demo` 对应本分类下的 demo 目录名（kebab-case，如 `Middleware` → `middleware`），
- *   仅 `lab` 步骤填写；前端用它推导出“开始学习”进入的 demo 路由。
  * - 本文件只放字面量数据，不 `import` 任何模块。
  */
 export const learningPath = {
@@ -21,12 +21,13 @@ export const learningPath = {
   label: 'Express',
   /** 模块整体说明，展示在落地页顶部。 */
   description:
-    '理解 Express 如何把一次 HTTP 请求从进入到响应串成一条可预测的链路。路径按“先建立心智模型 → 逐个动手实验 → 最后串成完整闭环”设计：先认识请求处理模型，再通过三个实验掌握中间件、错误处理与响应方法，最后总结常见误区与排查思路。',
-  /** 推荐学习步骤（教学路径，非 demo 列表）。 */
+    '理解 Express 如何把一次 HTTP 请求从进入到响应串成一条可预测的链路。路径按“先建立心智模型 → 逐个动手实验 → 最后串成完整闭环”设计：先认识请求处理模型，再通过三个实验掌握中间件、错误处理与响应方法，最后总结常见误区与排查思路。每一步都有可进入的页面（概念介绍或动手实验）。',
+  /** 推荐学习步骤（教学路径，每一步都关联一个页面）。 */
   steps: [
     {
       id: 'express-intro',
       kind: 'concept',
+      demo: 'Intro',
       title: '认识 Express 与请求处理模型',
       summary:
         '先建立整体心智模型：Express 是什么、一个请求如何从进入到响应，app / req / res 三者各管什么，为后面的实验铺垫共同语言。',
@@ -58,6 +59,7 @@ export const learningPath = {
     {
       id: 'express-wrapup',
       kind: 'concept',
+      demo: 'WrapUp',
       title: '串联完整链路与排查',
       summary:
         '把请求链、中间件、错误处理、响应方法串成一个完整闭环，梳理常见误区与“请求不返回/返回异常”时的排查思路，收尾巩固。',
