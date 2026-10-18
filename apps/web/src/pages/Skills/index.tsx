@@ -1,5 +1,6 @@
 import { Card, Container, SimpleGrid, Text, ThemeIcon, Title } from '@mantine/core';
 import { IconBook, IconRobot, IconStack } from '@tabler/icons-react';
+import { Link } from 'react-router';
 
 import type { ReactNode } from 'react';
 
@@ -48,12 +49,12 @@ const SkillDocs = () => (
       {SKILLS.map((skill) => (
         <Card
           className={styles.skillCard}
-          component="a"
-          href={skill.path}
+          component={Link}
           key={skill.path}
           padding="lg"
           radius="md"
           shadow="sm"
+          to={skill.path}
           withBorder
         >
           <ThemeIcon color="teal" radius="md" size={36} variant="light">
