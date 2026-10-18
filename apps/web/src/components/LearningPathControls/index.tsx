@@ -3,7 +3,7 @@ import { IconArrowLeft, IconArrowRight, IconCheck } from '@tabler/icons-react';
 import { useLocation, useNavigate } from 'react-router';
 import { useContext } from 'react';
 
-import { LearningPreviewContext } from '@/components/LearningPreview/Context';
+import { LearningPreviewContext } from '@/components/LearningPreview/Context/index';
 import { useLearningPath } from '@/hooks/useLearningPath';
 import { useLearningProgress } from '@/hooks/useLearningProgress';
 

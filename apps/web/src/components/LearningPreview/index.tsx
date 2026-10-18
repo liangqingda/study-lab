@@ -5,7 +5,7 @@ import type { ComponentType } from 'react';
 
 import { learningPreviews } from '@/generated/learning-previews';
 
-import { LearningPreviewContext } from './Context';
+import { LearningPreviewContext } from './Context/index';
 
 /**
  * 学习预览弹窗的受控状态。

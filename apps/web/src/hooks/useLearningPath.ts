@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import { useLocation } from 'react-router';
 
-import { LearningPreviewContext } from '@/components/LearningPreview/Context';
+import { LearningPreviewContext } from '@/components/LearningPreview/Context/index';
 import { learningPaths } from '@/generated/learning-paths';
 
 /** 学习步骤类型：概念/讲解（concept）或 动手实验（lab）。 */
