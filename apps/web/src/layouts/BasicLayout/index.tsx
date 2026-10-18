@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { AppShell } from '@mantine/core';
 
@@ -18,26 +18,21 @@ type BasicLayoutProps = {
   children: ReactNode;
 };
 
-const capitalize = (value: string) =>
-  value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
-
 const BasicLayout = ({ children }: BasicLayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   /*
-   * 顶层分类即「领域」：headerMenus 每一项是一个领域（当前仅 tech，
-   * 未来扩展 English 等新领域后该项列表随之增加）。sidebarOnly 的领域
-   * （如 skills 文档）只进侧边栏，不出现在 header 的领域切换中。
+   * 顶层分类即「领域」：headerMenus 每一项是一个领域（当前为 skills 与 tech，
+   * 未来扩展 English 等新领域后该项列表随之增加）。所有领域都出现在 header
+   * 的领域切换中；侧边栏仅展示当前领域下的分类菜单。
    */
   const visibleRealms = headerMenus.filter((realm) => !realm.sidebarOnly);
-  const sidebarOnlyRealms = headerMenus.filter((realm) => realm.sidebarOnly);
-  const [activeRealmKey, setActiveRealmKey] = useState<string | undefined>(
-    () => visibleRealms[0]?.key,
-  );
   const selectedRoute = useMemo(
     () => demoRoutes.find((route) => route.path === location.pathname),
     [location.pathname],
   );
+  // 领域以当前路由为准：直接访问或切换领域路由时自动跟随，无需单独状态。
+  const activeRealmKey = selectedRoute?.topLevelKey ?? visibleRealms[0]?.key;
   // 当前领域的分类（header 分类段，随领域切换整体替换）。
   const realmCategories = activeRealmKey
     ? (sidebarMenusByTopLevel[activeRealmKey] ?? [])
@@ -48,21 +43,12 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
       (item) =>
         item.children?.some((child) => child.key === selectedRoute?.menuKey),
     )?.key ?? realmCategories[0]?.key;
-  // 侧边栏 = 当前分类下的 demo 列表 + 所有 sidebarOnly 领域（如 Skills）。
-  const activeCategoryMenus =
+  // 侧边栏 = 当前领域下所选分类的 demo 列表（Skills 与 Tech 同级，只展示当前领域）。
+  const sidebarMenus =
     realmCategories.find((item) => item.key === selectedCategoryKey)
       ?.children ?? [];
-  const sidebarOnlyMenus = sidebarOnlyRealms.map((realm) => ({
-    key: `group:${realm.key}`,
-    label: capitalize(realm.label),
-    children: (sidebarMenusByTopLevel[realm.key] ?? []).flatMap(
-      (item) => item.children ?? [],
-    ),
-  }));
-  const sidebarMenus = [...activeCategoryMenus, ...sidebarOnlyMenus];
 
   const handleRealmChange = (key: string) => {
-    setActiveRealmKey(key);
     const target = visibleRealms.find((item) => item.key === key);
 
     if (target?.path) {

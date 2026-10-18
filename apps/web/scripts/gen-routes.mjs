@@ -12,9 +12,10 @@ const ignoredSegmentNames = new Set(['components', 'constants', 'errors', 'hooks
 
 /**
  * 仅出现在侧边栏、不出现在 header 领域切换中的顶层领域（按路由首段 kebab 名）。
- * 例：Skills 文档只从侧边栏进入，避免 header 领域下拉被非学习领域占用。
+ * 当前无此类领域：Skills 与 Tech 同为顶层领域，均出现在 header 领域切换中。
+ * 若需将某领域限制为仅侧边栏可见，把其路由首段 kebab 名加入本集合。
  */
-const SIDEBAR_ONLY_REALMS = new Set(['skills']);
+const SIDEBAR_ONLY_REALMS = new Set();
 
 const compareByName = (left, right) => left.name.localeCompare(right.name);
 
