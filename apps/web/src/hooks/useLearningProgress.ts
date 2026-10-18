@@ -58,5 +58,27 @@ export const useLearningProgress = () => {
     [visited],
   );
 
-  return { visited, markVisited, isVisited };
+  const clearVisited = useCallback((demoPaths: string[]) => {
+    if (demoPaths.length === 0) {
+      return;
+    }
+
+    setVisited((previous) => {
+      const next = new Set(previous);
+
+      for (const demoPath of demoPaths) {
+        next.delete(demoPath);
+      }
+
+      if (next.size === previous.size) {
+        return previous;
+      }
+
+      persistVisited(next);
+
+      return next;
+    });
+  }, []);
+
+  return { visited, markVisited, isVisited, clearVisited };
 };

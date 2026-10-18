@@ -1,5 +1,5 @@
 import { Badge, Button, Card, Group, Progress, Text, Title } from '@mantine/core';
-import { IconArrowRight, IconCheck, IconCircle } from '@tabler/icons-react';
+import { IconArrowRight, IconCheck, IconCircle, IconRotate } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 
 import { useLearningPath } from '@/hooks/useLearningPath';
@@ -17,7 +17,7 @@ import styles from './index.scss';
 const CategoryLearningPath = () => {
   const navigate = useNavigate();
   const info = useLearningPath();
-  const { markVisited, isVisited } = useLearningProgress();
+  const { markVisited, isVisited, clearVisited } = useLearningProgress();
 
   if (!info) {
     return (
@@ -35,6 +35,10 @@ const CategoryLearningPath = () => {
   const enter = (demoPath: string) => {
     markVisited(demoPath);
     navigate(demoPath);
+  };
+
+  const resetProgress = () => {
+    clearVisited(info.steps.map((step) => step.demoPath));
   };
 
   return (
@@ -55,6 +59,16 @@ const CategoryLearningPath = () => {
             size="md"
             value={progress}
           />
+          <Button
+            className={styles.resetButton}
+            disabled={doneCount === 0}
+            leftSection={<IconRotate size={14} />}
+            onClick={resetProgress}
+            size="xs"
+            variant="subtle"
+          >
+            重置进度
+          </Button>
         </div>
       </header>
 
