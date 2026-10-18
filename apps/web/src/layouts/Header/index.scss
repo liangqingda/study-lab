@@ -5,6 +5,15 @@
 .demo-header-brand {
   flex: 0 0 auto;
   min-width: max-content;
+  cursor: pointer;
+  border: 0;
+  background: none;
+  color: inherit;
+  transition: opacity 0.15s ease;
+}
+
+.demo-header-brand:hover {
+  opacity: 0.82;
 }
 
 .brand-mark {

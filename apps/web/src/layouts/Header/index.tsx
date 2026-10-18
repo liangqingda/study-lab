@@ -156,6 +156,12 @@ const Header = ({
     }
   };
 
+  // 当前领域的默认页：headerMenus 里领域项的 path 即该大类的落地页。
+  const activeRealm = realms.find((realm) => realm.key === activeRealmKey);
+  const brandTarget = activeRealm?.path ?? realms[0]?.path ?? '/';
+
+  const handleBrandClick = () => navigate(brandTarget);
+
   const handleRealmChange = (value: string | null) => {
     if (value) {
       onRealmChange(value);
@@ -164,19 +170,25 @@ const Header = ({
 
   return (
     <Group className={styles.demoHeaderInner} gap="lg" h="100%" wrap="nowrap">
-      <Group className={styles.demoHeaderBrand} gap="sm" wrap="nowrap">
-        <span aria-hidden="true" className={styles.brandMark}>
-          <IconTerminal2 size={19} stroke={2.1} />
-        </span>
-        <div className={styles.brandText}>
-          <Title className={styles.demoTitle} order={1}>
-            Study Lab
-          </Title>
-          <Text className={styles.brandTagline} component="span">
-            fullstack demos
-          </Text>
-        </div>
-      </Group>
+      <UnstyledButton
+        className={styles.demoHeaderBrand}
+        onClick={handleBrandClick}
+        title="回到当前领域首页"
+      >
+        <Group gap="sm" wrap="nowrap">
+          <span aria-hidden="true" className={styles.brandMark}>
+            <IconTerminal2 size={19} stroke={2.1} />
+          </span>
+          <div className={styles.brandText}>
+            <Title className={styles.demoTitle} order={1}>
+              Study Lab
+            </Title>
+            <Text className={styles.brandTagline} component="span">
+              fullstack demos
+            </Text>
+          </div>
+        </Group>
+      </UnstyledButton>
 
       {activeMenuKey && menuData.length > 0 ? (
         <nav aria-label="Demo sections" className={styles.demoHeaderMenu}>
