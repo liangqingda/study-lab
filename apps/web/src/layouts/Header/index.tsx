@@ -183,9 +183,6 @@ const Header = ({
             <Title className={styles.demoTitle} order={1}>
               Study Lab
             </Title>
-            <Text className={styles.brandTagline} component="span">
-              fullstack demos
-            </Text>
           </div>
         </Group>
       </UnstyledButton>
