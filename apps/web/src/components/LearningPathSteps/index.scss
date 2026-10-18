@@ -1,0 +1,19 @@
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border: 1px solid var(--demo-line);
+  border-radius: 10px;
+  background: var(--demo-surface-subtle);
+  margin-bottom: 20px;
+}
+
+@media (max-width: 620px) {
+  .bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

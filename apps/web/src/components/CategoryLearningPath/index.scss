@@ -1,0 +1,141 @@
+.shell {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 36px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--demo-line);
+  margin-bottom: 28px;
+}
+
+.header h1 {
+  margin: 4px 0 10px;
+  font-size: 32px;
+  letter-spacing: 0;
+}
+
+.header > :first-child {
+  min-width: 0;
+}
+
+.progressBlock {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  padding-top: 6px;
+}
+
+.progressText {
+  color: var(--demo-ink-soft);
+}
+
+.progressBar {
+  width: 180px;
+}
+
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stepCard {
+  background: var(--demo-surface);
+  border-color: var(--demo-line);
+}
+
+.stepCard:hover {
+  border-color: var(--demo-accent);
+  background: var(--demo-surface-hover);
+}
+
+.marker,
+.markerDone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.marker {
+  color: var(--demo-ink-faint);
+  border: 1px solid var(--demo-line-strong);
+  background: var(--demo-surface-subtle);
+}
+
+.markerDone {
+  color: var(--demo-surface);
+  background: var(--demo-accent);
+}
+
+.stepBody {
+  min-width: 0;
+}
+
+.stepIndex {
+  color: var(--demo-accent);
+  font-weight: 600;
+}
+
+.stepTitle {
+  margin: 4px 0 6px;
+  font-size: 18px;
+}
+
+.stepSummary {
+  color: var(--demo-ink-soft);
+  line-height: 1.6;
+}
+
+.enterButton {
+  flex-shrink: 0;
+}
+
+.empty {
+  padding: 48px 0;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .shell {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 620px) {
+  .shell {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .header h1 {
+    font-size: 26px;
+  }
+
+  .progressBlock {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .progressBar {
+    width: 100%;
+  }
+}

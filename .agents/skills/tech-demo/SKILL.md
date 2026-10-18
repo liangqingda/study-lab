@@ -67,6 +67,18 @@ description: Implement runnable, observable learning demos in the study-lab work
 - 组件适当拆分，每个组件单独一个文件，不要把多个组件堆在 `index.tsx` 里；子组件放在同目录的 `components/` 下，hook 放在 `hooks/` 下。
 - 只有当前页面用到的代码才放在该页面目录；跨 demo 复用的才提升到公共目录。
 
+## 学习路径落地页（模块总览）
+
+分类（大模块）可以拥有一个由生成器产出的「学习路径」总览页，展示该模块下各 demo 的推荐学习顺序与进度。**新增模块时无需手写总览页，按下列约定放配置即可自动生效：**
+
+- 在分类目录下放置 `pages/Tech/<原分类>/learning-path.ts`，内容为**纯字面量数据**（不得 `import` 任何模块，生成器与前端运行时都不解析别名）。顶部需加 `/* eslint-disable liangqingda-react/filename-naming-convention */` 豁免文件名规则。结构：
+  - `label`：模块展示名（落地页标题）；
+  - `description`：模块整体说明；
+  - `steps`：推荐学习顺序数组，每项 `{ demo, title, summary }`，其中 `demo` 为本分类下 demo 目录名的 **kebab-case**（如 `pages/Tech/Express/Middleware` → `middleware`），`title`/`summary` 为该步骤的学习标题与一句话说明。
+- `pnpm gen:routes` 检测到该文件后，自动为 `/tech/<原分类>` 生成「学习路径」落地页路由（复用共享组件 `src/components/CategoryLearningPath`）与侧边栏「学习路径」入口（列为该分类第一项）；落地页与各 demo 页面顶部步骤条（`DemoLayout` 内嵌的 `LearningPathSteps`）按 `steps` 顺序渲染，进入 demo 即用 localStorage 标记已学。
+- 新增模块的推荐流程：先建各 demo 页面与 schema 契约（见上文），再补 `learning-path.ts`，最后跑 `pnpm gen:routes` 确认路由与侧边栏。
+- 单 demo 模块可省略 `learning-path.ts`（无总览页、步骤条不显示）；多 demo 模块建议配置，以便学习者看到推荐顺序与进度。
+
 ## 前端页面设计（有 Web 页面时）
 
 - 编写 demo 的 Web 页面时，先完整读取「依赖的上游 Skill」表中的 `frontend-design` 并按其流程执行：先形成围绕该 demo 学习主题的设计方案（色彩、字体、布局、原则），再对照需求复核该方案是否真正由主题推导而来，最后实现并在交付前批判性自检、去掉不服务于内容的多余装饰。
