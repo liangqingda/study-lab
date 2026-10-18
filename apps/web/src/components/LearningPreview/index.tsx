@@ -1,8 +1,6 @@
-import { Modal } from '@mantine/core';
-
 import type { LearningPathInfo } from '@/hooks/useLearningPath';
-import ConceptPageLayout from '@/components/ConceptPageLayout';
-import LearningMarkdown from '@/components/LearningMarkdown';
+import KnowledgeDialog from '@/components/KnowledgeDialog';
+import LearningPathControls from '@/components/LearningPathControls';
 
 import { LearningPreviewContext } from './Context/index';
 
@@ -31,32 +29,24 @@ const LearningPreview = ({
 }: LearningPreviewProps) => {
   const step = info.steps.find((item) => item.id === stepId);
 
-  return (
-    <Modal
-      fullScreen
-      onClose={onClose}
-      opened={Boolean(step)}
-      title={`${info.label} · 学习路径`}
+  return step ? (
+    <LearningPreviewContext
+      value={{
+        categoryPath: info.categoryPath,
+        stepId: step.id,
+        navigate: onChange,
+      }}
     >
-      {step ? (
-        <LearningPreviewContext
-          value={{
-            categoryPath: info.categoryPath,
-            stepId: step.id,
-            navigate: onChange,
-          }}
-        >
-          <ConceptPageLayout
-            description={step.summary}
-            key={step.id}
-            title={step.title}
-          >
-            <LearningMarkdown content={step.content} />
-          </ConceptPageLayout>
-        </LearningPreviewContext>
-      ) : null}
-    </Modal>
-  );
+      <KnowledgeDialog
+        content={step.content}
+        footer={<LearningPathControls />}
+        onClose={onClose}
+        opened
+        subtitle={`${info.label} · 学习路径`}
+        title={step.title}
+      />
+    </LearningPreviewContext>
+  ) : null;
 };
 
 export default LearningPreview;

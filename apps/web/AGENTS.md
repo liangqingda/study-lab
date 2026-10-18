@@ -8,3 +8,5 @@
 5. 除 Skills 外，每个分类侧边栏首项统一为「学习路径」，下面仅列 Demo；概念内容通过学习路径的「开始学习」弹窗预览。学习路径须独立按技术知识依赖设计，不从 Demo 清单生成，不要求阶段绑定或覆盖 Demo；新增 Demo 不必登记为学习阶段。新增页面必须遵循 `.agents/skills/tech-demo/SKILL.md` 的学习路径规范，使用共享布局和生成器，不手写菜单或修改生成文件。
 
 6. 学习路径每个阶段必须提供可直接学习的详细笔记，按 take-notes 编写并运行 review-note 评审；包含术语、机制、完整实验、预期结果与原因、常见错误、边界、2–5 道验收练习和官方资料。正文使用分类内 `notes/*.md`，配置以 `contentFile` 引用；需要图示时使用 Mermaid 围栏，不得以提纲或现有 Demo 替代笔记。修改后运行 `node apps/web/scripts/check-learning-notes.mjs` 并验证弹窗中的目录、代码、表格和图示。
+
+7. 学习路径预览与 Demo 知识点讲解统一复用 `@/components/KnowledgeDialog` 的弹窗、目录树、滚动高亮和 Markdown/图示渲染；入口仅处理打开状态与学习操作，不另建内容导航样式。

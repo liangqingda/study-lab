@@ -75,7 +75,10 @@ const parseHeadings = (markdown: string): TocItem[] => {
  * 回溯到正确祖先，跳级标题（如 h2 后直接 h4）就近挂到最近的祖先下。
  */
 const buildTree = (items: TocItem[]): TocNode[] => {
-  const root: TocNode = { item: { id: '', text: '', level: 1, line: 0 }, children: [] };
+  const root: TocNode = {
+    item: { id: '', text: '', level: 1, line: 0 },
+    children: [],
+  };
   let stack: TocNode[] = [root];
 
   for (const item of items) {

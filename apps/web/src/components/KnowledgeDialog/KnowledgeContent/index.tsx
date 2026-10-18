@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { Children, isValidElement, useMemo, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -7,10 +7,11 @@ import type { KnowledgeContentProps } from '../types';
 
 import { HEADING_SELECTOR } from '../constants';
 import { useActiveHeading } from '../hooks/useActiveHeading';
+import MermaidDiagram from './MermaidDiagram';
 
 import styles from './index.scss';
 
-/*
+/**
  * 正文与滚动高亮监听独立成组件：它随弹窗内容一起挂载，
  * 其 effect 在自身 ref 赋值后才运行，避免父组件按 opened 时序取到空 ref。
  */
@@ -18,6 +19,7 @@ const KnowledgeContent = ({
   content,
   toc,
   onActiveChange,
+  footer,
 }: KnowledgeContentProps) => {
   const articleRef = useRef<HTMLElement | null>(null);
 
@@ -43,6 +45,27 @@ const KnowledgeContent = ({
     };
 
     return {
+      pre: ({ children }) => {
+        const [child] = Children.toArray(children);
+
+        if (
+          isValidElement<{ className?: string; children?: string }>(child) &&
+          child.props.className === 'language-mermaid'
+        ) {
+          return (
+            <MermaidDiagram
+              source={String(child.props.children ?? '').trim()}
+            />
+          );
+        }
+
+        return <pre>{children}</pre>;
+      },
+      table: ({ children }) => (
+        <div className={styles.tableScroll}>
+          <table>{children}</table>
+        </div>
+      ),
       h1: ({ node, ...rest }) => <h1 id={idFor(node)} {...rest} />,
       h2: ({ node, ...rest }) => <h2 id={idFor(node)} {...rest} />,
       h3: ({ node, ...rest }) => <h3 id={idFor(node)} {...rest} />,
@@ -56,9 +79,13 @@ const KnowledgeContent = ({
 
   return (
     <article className={styles.markdown} ref={articleRef}>
-      <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
+      <ReactMarkdown
+        components={markdownComponents}
+        remarkPlugins={[remarkGfm]}
+      >
         {content}
       </ReactMarkdown>
+      {footer ? <div className={styles.footer}>{footer}</div> : null}
     </article>
   );
 };
