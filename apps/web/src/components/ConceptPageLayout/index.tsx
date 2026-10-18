@@ -19,7 +19,7 @@ type ConceptPageLayoutProps = {
  * 概念介绍页的共用布局：统一内容宽度、页头与学习路径控件。
  *
  * 用于学习路径中的「概念」步骤页面（讲解型，没有可运行的实验与代码结构），
- * 因此不展示“代码结构/知识点讲解”弹窗入口；顶部仍保留学习路径控件，
+ * 因此不展示“代码结构/知识点讲解”弹窗入口；正文底部保留学习路径控件，
  * 便于标记完成与熟练度、在模块内上/下跳转。
  */
 const ConceptPageLayout = ({
@@ -34,8 +34,8 @@ const ConceptPageLayout = ({
         <Text c="dimmed">{description}</Text>
       </div>
     </header>
-    <LearningPathControls />
     <div className={styles.content}>{children}</div>
+    <LearningPathControls />
   </div>
 );
 

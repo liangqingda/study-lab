@@ -48,8 +48,8 @@ const DemoLayout = ({
         <DemoKnowledgeDialog content={knowledge} demoName={demoName ?? title} />
       </Group>
     </header>
-    <LearningPathControls />
     <div className={styles.content}>{children}</div>
+    <LearningPathControls />
   </div>
 );
 
