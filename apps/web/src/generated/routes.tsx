@@ -58,7 +58,7 @@ export type DemoMenuItem = {
   sidebarOnly?: boolean;
 };
 
-export const defaultRoutePath = '/skills';
+export const defaultRoutePath = '/tech/css/vertical-centering';
 
 export const demoRoutes: DemoRoute[] = [
   {
@@ -156,38 +156,20 @@ export const demoRoutes: DemoRoute[] = [
 
 export const headerMenus: DemoMenuItem[] = [
   {
-    key: '/skills',
-    label: 'skills',
-    path: '/skills',
-    sidebarOnly: false,
-  },
-  {
     key: '/tech',
     label: 'tech',
     path: '/tech/css/vertical-centering',
     sidebarOnly: false,
   },
+  {
+    key: '/skills',
+    label: 'skills',
+    path: '/skills',
+    sidebarOnly: false,
+  },
 ];
 
 export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
-  '/skills': [
-    {
-      key: 'group:/skills/demos',
-      label: 'demos',
-      children: [
-        {
-          key: '/skills/demos/create-realm-skill',
-          label: 'create-realm-skill',
-          path: '/skills/demos/create-realm-skill',
-        },
-        {
-          key: '/skills/demos/tech-demo',
-          label: 'tech-demo',
-          path: '/skills/demos/tech-demo',
-        },
-      ],
-    },
-  ],
   '/tech': [
     {
       key: 'group:/tech/css',
@@ -266,6 +248,24 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
           key: '/tech/redis/sms-login',
           label: 'sms-login',
           path: '/tech/redis/sms-login',
+        },
+      ],
+    },
+  ],
+  '/skills': [
+    {
+      key: 'group:/skills/demos',
+      label: 'demos',
+      children: [
+        {
+          key: '/skills/demos/create-realm-skill',
+          label: 'create-realm-skill',
+          path: '/skills/demos/create-realm-skill',
+        },
+        {
+          key: '/skills/demos/tech-demo',
+          label: 'tech-demo',
+          path: '/skills/demos/tech-demo',
         },
       ],
     },

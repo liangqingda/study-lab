@@ -37,16 +37,28 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
   const realmCategories = activeRealmKey
     ? (sidebarMenusByTopLevel[activeRealmKey] ?? [])
     : [];
+  /*
+   * 领域只有两级（领域 → demo，如 Skills 无分类层）时，不渲染 header 分类段，
+   * 侧边栏直接列出该领域全部 demo。
+   */
+  const isFlatRealm =
+    realmCategories.length === 1 &&
+    Boolean(realmCategories[0].children?.length);
+  const headerCategories = isFlatRealm ? [] : realmCategories;
   // 当前路由所属分类，用于 header 分类段高亮。
-  const selectedCategoryKey =
-    realmCategories.find(
-      (item) =>
-        item.children?.some((child) => child.key === selectedRoute?.menuKey),
-    )?.key ?? realmCategories[0]?.key;
-  // 侧边栏 = 当前领域下所选分类的 demo 列表（Skills 与 Tech 同级，只展示当前领域）。
-  const sidebarMenus =
-    realmCategories.find((item) => item.key === selectedCategoryKey)
-      ?.children ?? [];
+  const selectedCategoryKey = isFlatRealm
+    ? realmCategories[0]?.key
+    : realmCategories.find(
+        (item) =>
+          item.children?.some(
+            (child) => child.key === selectedRoute?.menuKey,
+          ),
+      )?.key ?? realmCategories[0]?.key;
+  // 侧边栏 = 当前领域下所选分类的 demo 列表（扁平领域直接列全部 demo）。
+  const sidebarMenus = isFlatRealm
+    ? (realmCategories[0]?.children ?? [])
+    : realmCategories.find((item) => item.key === selectedCategoryKey)
+        ?.children ?? [];
 
   const handleRealmChange = (key: string) => {
     const target = visibleRealms.find((item) => item.key === key);
@@ -67,7 +79,7 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
       <AppShell.Header className={styles.demoHeader}>
         <Header
           activeRealmKey={activeRealmKey}
-          menus={realmCategories}
+          menus={headerCategories}
           onRealmChange={handleRealmChange}
           realms={visibleRealms}
           selectedTopLevelKey={selectedCategoryKey}
