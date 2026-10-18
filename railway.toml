@@ -1,0 +1,16 @@
+# Railway 部署配置。根 Dockerfile 位于仓库根目录，Railway 会自动识别。
+# 部署前请在 Service → Variables 设置：
+#   - 构建变量 NPM_TOKEN：GitHub Packages 只读 token（read:packages），安装私有 @liangqingda/* 包
+#   - 运行变量 NODE_ENV=production
+#   - 运行变量 CORS_ORIGINS=https://<你的>.up.railway.app（首次部署拿到域名后回填）
+#   - 运行变量 DATABASE_URL、REDIS_URL：分别来自 Railway 的 Postgres / Redis 插件
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "/Dockerfile"
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10

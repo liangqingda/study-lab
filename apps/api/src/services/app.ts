@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
@@ -78,6 +81,29 @@ export const createApp = (
   app.use('/api/tech/express/middleware', applicationMiddleware, middlewareRouter);
   app.use('/api/tech/express/error-handling', errorHandlingRouter);
   app.use('/api/tech/http/url-to-page', createUrlToPageRouter());
+
+  /*
+   * 生产态单容器托管：若构建出的前端静态目录存在，则由 API 一并提供
+   * SPA 资源，并对非 /api 的 GET 请求回退到 index.html（客户端路由）。
+   * 开发态仍由 vite dev server 独立服务，不走到这里。
+   */
+  if (config.nodeEnv === 'production' && config.webDistDir) {
+    const webDist = path.resolve(config.webDistDir);
+    const webIndex = path.join(webDist, 'index.html');
+
+    if (fs.existsSync(webIndex)) {
+      app.use(express.static(webDist));
+      app.use((req, res, next) => {
+        if (req.method === 'GET' && !req.path.startsWith('/api/')) {
+          res.sendFile(webIndex);
+          return;
+        }
+
+        next();
+      });
+    }
+  }
+
   app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
   app.use(errorHandler);
 

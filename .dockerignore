@@ -1,0 +1,14 @@
+# Docker 构建上下文排除项（根 Dockerfile 专用，构建在容器内重新 install/build）
+**/node_modules
+**/build
+**/dist
+**/lib
+**/coverage
+**/.pnpm-store
+.git
+.pnpm-store
+.DS_Store
+**/.env
+**/.env.*
+!**/.env.example
+*.log

@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import path from 'node:path';
 
 import { readConfig } from './consts/config';
 import { createApp } from './services/app';
@@ -6,14 +7,23 @@ import { createPostgresPool } from './services/postgres';
 import { createRedisClient } from './services/redis';
 
 const config = readConfig();
-const postgres = config.databaseUrl
-  ? createPostgresPool(config.databaseUrl)
+
+/*
+ * 生产态未显式设置 WEB_DIST_DIR 时，回退到编译产物相对路径：
+ * apps/api/build/../../web/dist = apps/web/dist。
+ */
+const resolvedConfig = config.webDistDir
+  ? config
+  : { ...config, webDistDir: path.resolve(__dirname, '../../web/dist') };
+
+const postgres = resolvedConfig.databaseUrl
+  ? createPostgresPool(resolvedConfig.databaseUrl)
   : undefined;
-const redis = createRedisClient(config.redisUrl);
-const server = createApp(config, postgres, redis).listen(
-  config.httpPort,
+const redis = createRedisClient(resolvedConfig.redisUrl);
+const server = createApp(resolvedConfig, postgres, redis).listen(
+  resolvedConfig.httpPort,
   () => {
-    console.info(`Server running at http://localhost:${config.httpPort}`);
+    console.info(`Server running at http://localhost:${resolvedConfig.httpPort}`);
   },
 );
 
