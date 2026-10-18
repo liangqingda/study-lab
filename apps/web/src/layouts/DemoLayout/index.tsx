@@ -5,7 +5,6 @@ import type { ReactNode } from 'react';
 import type { DemoStructure } from '@/components/DemoStructureDialog/types';
 import DemoKnowledgeDialog from '@/components/DemoKnowledgeDialog';
 import DemoStructureDialog from '@/components/DemoStructureDialog';
-import LearningPathControls from '@/components/LearningPathControls';
 
 import styles from './index.scss';
 
@@ -49,7 +48,6 @@ const DemoLayout = ({
       </Group>
     </header>
     <div className={styles.content}>{children}</div>
-    <LearningPathControls />
   </div>
 );
 

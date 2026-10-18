@@ -319,7 +319,11 @@ const createSidebarMenus = (topLevelRoutes) => {
     .map(([secondLevelSegment, routeGroup]) => {
       const { route, thirdLevelRoutes } = routeGroup;
 
-      if (thirdLevelRoutes.length === 0 && route) {
+      if (
+        thirdLevelRoutes.length === 0 &&
+        route &&
+        route.label !== '学习路径'
+      ) {
         return {
           key: route.menuKey,
           label: route.label,
@@ -398,8 +402,8 @@ export const generateRoutes = async (projectRoot = rootDir) => {
 
     usedRoutePaths.set(routePath, pageFile.filePath);
 
-    routes.push(
-      createRouteEntry({
+    routes.push({
+      ...createRouteEntry({
         filePath: pageFile.filePath,
         isIndexFile: pageFile.isIndexFile,
         label: routeSegments.at(-1),
@@ -409,10 +413,13 @@ export const generateRoutes = async (projectRoot = rootDir) => {
         usedIdentifiers,
         projectRoot,
       }),
-    );
+      conceptOnly: /\bConceptPageLayout\b/.test(
+        await readFile(pageFile.filePath, 'utf8'),
+      ),
+    });
   }
 
-  // 所有非 Skills 分类自动拥有学习路径；概念内容只在学习路径内预览。
+  // 学习大纲独立于 Demo 清单，所有非 Skills 分类必须显式设计。
   const configs = await collectLearningPathConfigs(pagesDir);
   const learningPaths = {};
   const categories = new Map();
@@ -424,65 +431,61 @@ export const generateRoutes = async (projectRoot = rootDir) => {
     categories.get(categoryPath).push(route);
   }
 
+  for (const config of configs) {
+    if (toRouteSegment(config.realm) === 'skills') continue;
+    const categoryPath = pathToRoute(
+      [config.realm, config.category].map(toRouteSegment),
+    );
+    if (!categories.has(categoryPath)) categories.set(categoryPath, []);
+  }
+
   const stepIds = new Set();
-  for (const [categoryPath, pages] of categories) {
+  for (const categoryPath of categories.keys()) {
     const config = configs.find(
       (item) =>
         pathToRoute([item.realm, item.category].map(toRouteSegment)) ===
         categoryPath,
     );
-    let learningPath;
-    if (config) {
-      const source = await readFile(
-        path.join(pagesDir, config.realm, config.category, 'learning-path.ts'),
-        'utf8',
+    if (!config) {
+      throw new Error(
+        `${categoryPath}: 请独立设计 learning-path.ts，不能从 Demo 列表生成学习路径`,
       );
-      const compiled = ts.transpileModule(source, {
-        compilerOptions: { module: ts.ModuleKind.ESNext },
-      }).outputText;
-      learningPath = (
-        await import(
-          `data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`
-        )
-      ).learningPath;
-    } else {
-      learningPath = {
-        label: pages[0].segments[1],
-        description: '按顺序预览并完成本模块的实验，记录学习进度与熟练度。',
-        steps: pages.map((page) => ({
-          id: page.path,
-          kind: 'lab',
-          demo: page.segments[2],
-          title: page.label,
-          summary: `通过 ${page.label} 实验学习并观察运行结果。`,
-        })),
-      };
     }
-    if (!learningPath?.steps?.length)
-      throw new Error(`${categoryPath}: 学习路径不能为空`);
-    const linkedPaths = new Set();
+    const source = await readFile(
+      path.join(pagesDir, config.realm, config.category, 'learning-path.ts'),
+      'utf8',
+    );
+    const compiled = ts.transpileModule(source, {
+      compilerOptions: { module: ts.ModuleKind.ESNext },
+    }).outputText;
+    const { learningPath } = await import(
+      `data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`
+    );
+    if (
+      !learningPath?.label ||
+      !learningPath.description ||
+      !learningPath.steps?.length
+    ) {
+      throw new Error(
+        `${categoryPath}: 学习路径必须包含名称、说明与独立学习阶段`,
+      );
+    }
     for (const step of learningPath.steps) {
-      const target = `${categoryPath}/${toRouteSegment(step.demo ?? '')}`;
       if (
-        !pages.some((page) => page.path === target) ||
-        !['concept', 'lab'].includes(step.kind) ||
         !step.id ||
         stepIds.has(step.id) ||
-        linkedPaths.has(target) ||
+        !['concept', 'lab'].includes(step.kind) ||
         !step.title ||
-        !step.summary
+        !step.summary ||
+        !step.content?.trim() ||
+        'demo' in step ||
+        'demoPath' in step
       ) {
         throw new Error(
-          `${categoryPath}: 无效或重复的学习步骤 ${step.id ?? target}`,
+          `${categoryPath}: 无效、重复或依赖 Demo 的学习阶段 ${step.id}`,
         );
       }
       stepIds.add(step.id);
-      linkedPaths.add(target);
-      if (step.kind === 'concept')
-        pages.find((page) => page.path === target).conceptOnly = true;
-    }
-    if (pages.some((page) => !linkedPaths.has(page.path))) {
-      throw new Error(`${categoryPath}: 新页面必须加入 learning-path.ts`);
     }
     learningPaths[categoryPath] = learningPath;
     if (usedRoutePaths.has(categoryPath))
@@ -495,7 +498,7 @@ export const generateRoutes = async (projectRoot = rootDir) => {
       menuKey: categoryPath,
       path: categoryPath,
       segments: categoryPath.split('/').filter(Boolean),
-      topLevelKey: `/${pages[0].segments[0]}`,
+      topLevelKey: `/${categoryPath.split('/')[1]}`,
     });
   }
 
@@ -539,24 +542,6 @@ export const generateRoutes = async (projectRoot = rootDir) => {
 
     sidebarMenusByTopLevel[topLevelKey] = createSidebarMenus(topLevelRoutes);
   }
-
-  const previewFile = path.join(
-    projectRoot,
-    'src/generated/learning-previews.ts',
-  );
-  const previewRoutes = routes.filter((route) => route.segments.length === 3);
-  const previewOutput = await prettier.format(
-    `/* eslint-disable */\n// Generated by pnpm gen:routes.\nimport { lazy } from 'react';\nexport const learningPreviews = {\n${previewRoutes.map((route) => `${jsString(route.path)}: lazy(() => import(${jsString(route.importPath)})),`).join('\n')}\n};\n`,
-    { filepath: previewFile },
-  );
-  const previousPreviews = await readFile(previewFile, 'utf8').catch(
-    (error) => {
-      if (error.code === 'ENOENT') return undefined;
-      throw error;
-    },
-  );
-  if (previousPreviews !== previewOutput)
-    await writeFile(previewFile, previewOutput);
 
   const seenImports = new Set();
   const lazyLines = [];

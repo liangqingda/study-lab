@@ -1,45 +1,61 @@
-import { Suspense } from 'react';
-import { Center, Loader, Modal } from '@mantine/core';
+import { Modal } from '@mantine/core';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
-import type { ComponentType } from 'react';
-
-import { learningPreviews } from '@/generated/learning-previews';
+import type { LearningPathInfo } from '@/hooks/useLearningPath';
+import ConceptPageLayout from '@/components/ConceptPageLayout';
 
 import { LearningPreviewContext } from './Context/index';
 
 /**
- * 学习预览弹窗的受控状态。
+ * 学习阶段弹窗的受控状态，使用阶段 id 而非 Demo 路由。
  */
 type LearningPreviewProps = {
-  /** 当前预览步骤的路径；null 表示关闭。 */
-  path: string | null;
-  /** 切换预览步骤。 */
-  onChange: (path: string) => void;
-  /** 关闭弹窗并保留总览进度。 */
+  /** 独立编写的技术学习大纲。 */
+  info: LearningPathInfo;
+  /** 当前预览阶段，null 表示关闭。 */
+  stepId: string | null;
+  /** 在弹窗内切换阶段。 */
+  onChange: (stepId: string) => void;
+  /** 关闭预览。 */
   onClose: () => void;
 };
 
 /**
- * 在学习路径上预览概念与实验，关闭后仍停留在原来的总览位置。
+ * 展示阶段目标、知识范围、练习及验收标准，不加载任何 Demo 页面。
  */
-const LearningPreview = ({ path, onChange, onClose }: LearningPreviewProps) => {
-  const Component = path
-    ? (learningPreviews as Partial<Record<string, ComponentType>>)[path]
-    : undefined;
+const LearningPreview = ({
+  info,
+  stepId,
+  onChange,
+  onClose,
+}: LearningPreviewProps) => {
+  const step = info.steps.find((item) => item.id === stepId);
 
   return (
-    <Modal fullScreen onClose={onClose} opened={Boolean(path)} title="学习预览">
-      {path ? (
-        <LearningPreviewContext value={{ path, navigate: onChange }}>
-          <Suspense
-            fallback={
-              <Center p="xl">
-                <Loader />
-              </Center>
-            }
+    <Modal
+      fullScreen
+      onClose={onClose}
+      opened={Boolean(step)}
+      title={`${info.label} · 学习路径`}
+    >
+      {step ? (
+        <LearningPreviewContext
+          value={{
+            categoryPath: info.categoryPath,
+            stepId: step.id,
+            navigate: onChange,
+          }}
+        >
+          <ConceptPageLayout
+            description={step.summary}
+            key={step.id}
+            title={step.title}
           >
-            {Component ? <Component key={path} /> : null}
-          </Suspense>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {step.content}
+            </ReactMarkdown>
+          </ConceptPageLayout>
         </LearningPreviewContext>
       ) : null}
     </Modal>

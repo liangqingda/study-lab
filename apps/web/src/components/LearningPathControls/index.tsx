@@ -1,6 +1,5 @@
 import { Badge, Button, Group, Rating, Text } from '@mantine/core';
 import { IconArrowLeft, IconArrowRight, IconCheck } from '@tabler/icons-react';
-import { useLocation, useNavigate } from 'react-router';
 import { useContext } from 'react';
 
 import { LearningPreviewContext } from '@/components/LearningPreview/Context/index';
@@ -13,28 +12,26 @@ import styles from './index.scss';
 const PROFICIENCY_LABELS = ['生疏', '了解', '熟悉', '熟练', '精通'];
 
 /**
- * 概念页与 demo 页正文底部的学习路径控件，由共用布局内嵌。
+ * 独立学习阶段预览底部的进度与切换控件。
  *
  * 显示「本模块第 N/M 步」与已完成进度，提供上一/下一步导航，并对当前
  * 步骤提供「标记完成」与熟练度标记。完成只由用户主动点击触发，进入页面
  * 不会自动勾选。
  */
 const LearningPathControls = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
   const preview = useContext(LearningPreviewContext);
   const info = useLearningPath();
   const { getProgress, setCompleted, setProficiency } = useLearningProgress();
 
-  if (!info || info.total === 0) {
+  if (!preview || !info || info.total === 0) {
     return null;
   }
 
   const currentIndex = info.steps.findIndex(
-    (step) => step.demoPath === (preview?.path ?? location.pathname),
+    (step) => step.id === preview.stepId,
   );
 
-  // 当前页面不属于该模块路径上的 lab 步骤（如模块外的页面）时不展示。
+  // 仅在有效的独立学习阶段预览中显示。
   if (currentIndex === -1) {
     return null;
   }
@@ -42,7 +39,7 @@ const LearningPathControls = () => {
   const current = info.steps[currentIndex];
   const currentProgress = getProgress(current.id);
   const completed = Boolean(currentProgress.completed);
-  // 每一步都有对应页面，上/下导航直接跳相邻步骤。
+  // 切换相邻学习阶段，不导航至 Demo 页面。
   const hasPrevious = currentIndex > 0;
   const previous = info.steps[currentIndex - 1];
   const hasNext = currentIndex < info.total - 1;
@@ -50,12 +47,6 @@ const LearningPathControls = () => {
   const doneCount = info.steps.filter(
     (step) => getProgress(step.id).completed,
   ).length;
-
-  const goTo = (demoPath?: string) => {
-    if (demoPath) {
-      (preview?.navigate ?? navigate)(demoPath);
-    }
-  };
 
   return (
     <div className={styles.bar}>
@@ -86,7 +77,7 @@ const LearningPathControls = () => {
         {hasPrevious ? (
           <Button
             leftSection={<IconArrowLeft size={14} />}
-            onClick={() => goTo(previous.demoPath)}
+            onClick={() => preview.navigate(previous.id)}
             size="xs"
             variant="subtle"
           >
@@ -95,7 +86,7 @@ const LearningPathControls = () => {
         ) : null}
         {hasNext ? (
           <Button
-            onClick={() => goTo(next.demoPath)}
+            onClick={() => preview.navigate(next.id)}
             rightSection={<IconArrowRight size={14} />}
             size="xs"
             variant="subtle"

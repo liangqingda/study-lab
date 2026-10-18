@@ -4,10 +4,12 @@ import { createContext } from 'react';
  * 弹窗内独立于浏览器地址的学习步骤。
  */
 type LearningPreviewState = {
-  /** 当前预览步骤路径。 */
-  path: string;
+  /** 当前技术分类。 */
+  categoryPath: string;
+  /** 当前预览阶段的稳定标识。 */
+  stepId: string;
   /** 在弹窗内切换步骤。 */
-  navigate: (path: string) => void;
+  navigate: (stepId: string) => void;
 };
 
 /**

@@ -69,13 +69,13 @@ description: Implement runnable, observable learning demos in the study-lab work
 
 ## 学习路径与侧边栏（强制）
 
-- 除 Skills 外，每个分类侧边栏第一项必须是「学习路径」，下方只列可运行 Demo；概念铺垫、讲解与总结仅通过学习路径预览。
-- 分类首页使用共享 `CategoryLearningPath`，点击「开始学习」使用 `LearningPreview` 全屏弹窗，保持总览 URL 与滚动位置；弹窗内上下步骤也只切换预览。完成与熟练度控件在正文底部，和总览实时同步，进入页面不自动完成。
-- 生成器为所有非 Skills 分类补齐学习路径。未配置时自动生成基础实验顺序；新增教学内容应优先在 `pages/Tech/<分类>/learning-path.ts` 设计概念→实验→总结，导出纯字面量 `learningPath`（不 import），包含 `label`、`description`、`steps`。
-- 每步必须填写 `{ id, kind, demo, title, summary }`：id 全局稳定唯一，kind 为 concept 或 lab，demo 对应分类真实页面目录（PascalCase 或 kebab-case）。配置完整覆盖所有页面，每页一次，已有 id 不随改标题变化。
-- 概念页使用 `ConceptPageLayout`；实验页使用 `DemoLayout`。无需手写总览或菜单，不编辑 generated 文件。
-- 新增页面或修改配置后运行 `pnpm --filter @study-lab/web gen:routes`。生成器拒绝缺失目标、重复 id/页面、非法 kind、漏登记新页面、路由冲突；开发服务器在增删改页面时执行同一校验。
-- 验证菜单顺序、概念不出现在菜单、弹窗打开/关闭与切换、进度同步；运行 `node --test apps/web/scripts/gen-routes.test.mjs`、类型检查和构建。
+- 学习路径是独立设计的技术学习大纲，按前置知识、基础、核心机制、进阶、工程实践与综合应用组织；不能根据现有 Demo 清单拼接或限制覆盖范围。Demo 仅为某个知识点的独立实验，不属于路径上的必修项目，不要求一一对应或互相覆盖。
+- 除 Skills 外，每个技术分类必须显式提供 `pages/Tech/<分类>/learning-path.ts`，导出纯字面量 `learningPath`（不 import）。字段为 `label`、`description`、`steps`；每步必须包含 `{ id, kind, title, summary, content }`，禁止 `demo`、`demoPath`。id 全局稳定唯一；kind 为 concept（知识阶段）或 lab（独立综合实践）；content 为可直接阅读的 Markdown。
+- 每个阶段至少包含学习目标、前置知识、核心知识与学习顺序、独立练习、验收标准和权威资料链接。先按完整技术能力设计路线，再写内容；不能因缺少 Demo 省略必需知识。扩展技术范围时核对官方资料，说明版本相关边界。
+- 每个分类侧边栏首项为「学习路径」，下方只列 Demo。概念内容不混进 Demo 菜单；使用 `ConceptPageLayout` 的已有概念页由生成器过滤。新增 Demo 使用 `DemoLayout`，不附加学习阶段进度或上下阶段导航。
+- 分类首页使用 `CategoryLearningPath`；「开始学习」使用 `LearningPreview` 按阶段 id 展示独立 content，不能打开 Demo 路由作为课程内容。正文底部提供阶段切换、主动完成与熟练度，并与总览同步；关闭后保留总览 URL 与位置。
+- 新增 Demo 只自动加入 Demo 菜单，不改变学习大纲，无需在 steps 登记。新增技术必须先设计独立学习路径，生成器会拒绝无大纲、空阶段、重复 id、缺少内容、非法 kind 和绑定 Demo 的配置；没有 Demo 的技术也可以仅提供大纲。
+- 不手写总览和菜单，不编辑 generated 文件。修改后运行 `pnpm --filter @study-lab/web gen:routes`、`node --test apps/web/scripts/gen-routes.test.mjs`、类型检查与构建，并在真实浏览器验证总览、独立阶段弹窗、阶段切换和进度同步。
 
 ## 前端页面设计（有 Web 页面时）
 

@@ -29,11 +29,11 @@ const PROFICIENCY_LABELS = ['生疏', '了解', '熟悉', '熟练', '精通'];
  * 分类的「学习路径」总览，由 gen-routes 为非 Skills 分类统一生成。
  * 开始学习在弹窗内预览，保持总览页面与进度。
  *
- * 展示设计的教学路径（概念/实验步骤）；每步可主动「标记完成」并标记熟练度，
+ * 展示独立设计的技术学习阶段；每步可主动「标记完成」并标记熟练度，
  * 均基于 localStorage 持久化。完成与熟练度不随进入页面自动勾选。
  */
 const CategoryLearningPath = () => {
-  const [previewPath, setPreviewPath] = useState<string | null>(null);
+  const [previewStepId, setPreviewStepId] = useState<string | null>(null);
   const info = useLearningPath();
   const { getProgress, setCompleted, setProficiency, clearProgress } =
     useLearningProgress();
@@ -57,12 +57,6 @@ const CategoryLearningPath = () => {
 
     return Boolean(current.completed) || Boolean(current.proficiency);
   });
-
-  const enter = (demoPath?: string) => {
-    if (demoPath) {
-      setPreviewPath(demoPath);
-    }
-  };
 
   const resetProgress = () => {
     clearProgress(info.steps.map((step) => step.id));
@@ -100,12 +94,11 @@ const CategoryLearningPath = () => {
       </header>
 
       <LearningPreview
+        info={info}
         key={info.categoryPath}
-        onChange={setPreviewPath}
-        onClose={() => setPreviewPath(null)}
-        path={
-          previewPath?.startsWith(`${info.categoryPath}/`) ? previewPath : null
-        }
+        onChange={setPreviewStepId}
+        onClose={() => setPreviewStepId(null)}
+        stepId={previewStepId}
       />
       <ol className={styles.timeline}>
         {info.steps.map((step) => {
@@ -140,7 +133,7 @@ const CategoryLearningPath = () => {
                           size="sm"
                           variant="light"
                         >
-                          {step.kind === 'lab' ? '实验' : '概念'}
+                          {step.kind === 'lab' ? '综合实践' : '知识阶段'}
                         </Badge>
                         <Text
                           className={styles.stepIndex}
@@ -181,16 +174,14 @@ const CategoryLearningPath = () => {
                     </div>
                   </Group>
                   <Group className={styles.actions} gap="xs" wrap="nowrap">
-                    {step.demoPath ? (
-                      <Button
-                        leftSection={<IconArrowRight size={16} />}
-                        onClick={() => enter(step.demoPath)}
-                        size="xs"
-                        variant="light"
-                      >
-                        开始学习
-                      </Button>
-                    ) : null}
+                    <Button
+                      leftSection={<IconArrowRight size={16} />}
+                      onClick={() => setPreviewStepId(step.id)}
+                      size="xs"
+                      variant="light"
+                    >
+                      开始学习
+                    </Button>
                     <Button
                       color={completed ? 'gray' : 'green'}
                       onClick={() => setCompleted(step.id, !completed)}
