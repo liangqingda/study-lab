@@ -11,7 +11,19 @@
   margin-bottom: 20px;
 }
 
-@media (max-width: 620px) {
+.meta {
+  min-width: 0;
+}
+
+.proficiency {
+  flex-shrink: 0;
+}
+
+.actions {
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
   .bar {
     align-items: flex-start;
     flex-direction: column;

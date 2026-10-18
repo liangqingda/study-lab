@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Group, Progress, Text, Title } from '@mantine/core';
+import { Badge, Button, Card, Group, Progress, Rating, Text, Title } from '@mantine/core';
 import { IconArrowRight, IconCheck, IconCircle, IconRotate } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 
@@ -7,17 +7,21 @@ import { useLearningProgress } from '@/hooks/useLearningProgress';
 
 import styles from './index.scss';
 
+/** 熟练度 1-5 档的展示文案（下标 0 对应 1 星）。 */
+const PROFICIENCY_LABELS = ['生疏', '了解', '熟悉', '熟练', '精通'];
+
 /**
  * 分类（大模块）的「学习路径」落地页，由 gen-routes 为带 learning-path.ts
  * 的分类自动生成路由（/realm/分类）并复用本组件渲染。
  *
- * 展示该模块的推荐学习顺序与进度（基于 localStorage 的已学标记），
- * 点击步骤进入对应 demo。
+ * 展示设计的教学路径（概念/实验步骤）；每步可主动「标记完成」并标记熟练度，
+ * 均基于 localStorage 持久化。完成与熟练度不随进入页面自动勾选。
  */
 const CategoryLearningPath = () => {
   const navigate = useNavigate();
   const info = useLearningPath();
-  const { markVisited, isVisited, clearVisited } = useLearningProgress();
+  const { getProgress, setCompleted, setProficiency, clearProgress } =
+    useLearningProgress();
 
   if (!info) {
     return (
@@ -29,16 +33,24 @@ const CategoryLearningPath = () => {
     );
   }
 
-  const doneCount = info.steps.filter((step) => isVisited(step.demoPath)).length;
+  const doneCount = info.steps.filter(
+    (step) => getProgress(step.id).completed,
+  ).length;
   const progress = Math.round((doneCount / info.total) * 100);
+  const hasAnyProgress = info.steps.some((step) => {
+    const current = getProgress(step.id);
 
-  const enter = (demoPath: string) => {
-    markVisited(demoPath);
-    navigate(demoPath);
+    return Boolean(current.completed) || Boolean(current.proficiency);
+  });
+
+  const enter = (demoPath?: string) => {
+    if (demoPath) {
+      navigate(demoPath);
+    }
   };
 
   const resetProgress = () => {
-    clearVisited(info.steps.map((step) => step.demoPath));
+    clearProgress(info.steps.map((step) => step.id));
   };
 
   return (
@@ -61,7 +73,7 @@ const CategoryLearningPath = () => {
           />
           <Button
             className={styles.resetButton}
-            disabled={doneCount === 0}
+            disabled={!hasAnyProgress}
             leftSection={<IconRotate size={14} />}
             onClick={resetProgress}
             size="xs"
@@ -74,10 +86,11 @@ const CategoryLearningPath = () => {
 
       <ol className={styles.timeline}>
         {info.steps.map((step) => {
-          const done = isVisited(step.demoPath);
+          const current = getProgress(step.id);
+          const completed = Boolean(current.completed);
 
           return (
-            <li key={step.demoPath}>
+            <li key={step.id}>
               <Card
                 className={styles.stepCard}
                 padding="lg"
@@ -89,9 +102,9 @@ const CategoryLearningPath = () => {
                   <Group align="flex-start" gap="md" wrap="nowrap">
                     <span
                       aria-hidden="true"
-                      className={done ? styles.markerDone : styles.marker}
+                      className={completed ? styles.markerDone : styles.marker}
                     >
-                      {done ? (
+                      {completed ? (
                         <IconCheck size={18} stroke={2.4} />
                       ) : (
                         <IconCircle size={18} stroke={1.8} />
@@ -99,12 +112,23 @@ const CategoryLearningPath = () => {
                     </span>
                     <div className={styles.stepBody}>
                       <Group gap="sm" wrap="nowrap">
-                        <Text className={styles.stepIndex} component="span" size="sm">
+                        <Badge
+                          color={step.kind === 'lab' ? 'teal' : 'gray'}
+                          size="sm"
+                          variant="light"
+                        >
+                          {step.kind === 'lab' ? '实验' : '概念'}
+                        </Badge>
+                        <Text
+                          className={styles.stepIndex}
+                          component="span"
+                          size="sm"
+                        >
                           第 {step.index} 步
                         </Text>
-                        {done ? (
-                          <Badge color="teal" size="sm" variant="light">
-                            已学
+                        {completed ? (
+                          <Badge color="green" size="sm" variant="filled">
+                            已完成
                           </Badge>
                         ) : null}
                       </Group>
@@ -114,17 +138,41 @@ const CategoryLearningPath = () => {
                       <Text className={styles.stepSummary} size="sm">
                         {step.summary}
                       </Text>
+                      <Group className={styles.proficiency} gap="xs" wrap="nowrap">
+                        <Rating
+                          aria-label="标记熟练度"
+                          onChange={(value) => setProficiency(step.id, value)}
+                          size="sm"
+                          value={current.proficiency ?? 0}
+                        />
+                        <Text c="dimmed" size="sm">
+                          {current.proficiency
+                            ? PROFICIENCY_LABELS[current.proficiency - 1]
+                            : '未标记熟练度'}
+                        </Text>
+                      </Group>
                     </div>
                   </Group>
-                  <Button
-                    className={styles.enterButton}
-                    onClick={() => enter(step.demoPath)}
-                    rightSection={<IconArrowRight size={16} />}
-                    size="xs"
-                    variant={done ? 'subtle' : 'light'}
-                  >
-                    开始学习
-                  </Button>
+                  <Group className={styles.actions} gap="xs" wrap="nowrap">
+                    {step.demoPath ? (
+                      <Button
+                        leftSection={<IconArrowRight size={16} />}
+                        onClick={() => enter(step.demoPath)}
+                        size="xs"
+                        variant="light"
+                      >
+                        开始学习
+                      </Button>
+                    ) : null}
+                    <Button
+                      color={completed ? 'gray' : 'green'}
+                      onClick={() => setCompleted(step.id, !completed)}
+                      size="xs"
+                      variant={completed ? 'subtle' : 'filled'}
+                    >
+                      {completed ? '取消完成' : '标记完成'}
+                    </Button>
+                  </Group>
                 </Group>
               </Card>
             </li>

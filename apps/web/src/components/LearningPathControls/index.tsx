@@ -1,0 +1,120 @@
+import { Badge, Button, Group, Rating, Text } from '@mantine/core';
+import { IconArrowLeft, IconArrowRight, IconCheck } from '@tabler/icons-react';
+import { useLocation, useNavigate } from 'react-router';
+
+import { useLearningPath } from '@/hooks/useLearningPath';
+import { useLearningProgress } from '@/hooks/useLearningProgress';
+
+import styles from './index.scss';
+
+/** 熟练度 1-5 档的展示文案（下标 0 对应 1 星）。 */
+const PROFICIENCY_LABELS = ['生疏', '了解', '熟悉', '熟练', '精通'];
+
+/**
+ * demo 页顶部的学习路径控件（由 DemoLayout 内嵌，所有 demo 自动生效）。
+ *
+ * 显示「本模块第 N/M 步」与已完成进度，提供上一/下一模块导航，并对当前
+ * 步骤提供「标记完成」与熟练度标记。完成只由用户主动点击触发，进入页面
+ * 不会自动勾选。
+ */
+const LearningPathControls = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const info = useLearningPath();
+  const { getProgress, setCompleted, setProficiency } = useLearningProgress();
+
+  if (!info || info.total < 2) {
+    return null;
+  }
+
+  const currentIndex = info.steps.findIndex(
+    (step) => step.demoPath === location.pathname,
+  );
+
+  // 当前页面不属于该模块路径上的 lab 步骤（如模块外的页面）时不展示。
+  if (currentIndex === -1) {
+    return null;
+  }
+
+  const current = info.steps[currentIndex];
+  const currentProgress = getProgress(current.id);
+  const completed = Boolean(currentProgress.completed);
+  // 概念步骤没有对应 demo 页，导航只跳相邻的「实验」步骤。
+  const previousLabs = info.steps
+    .slice(0, currentIndex)
+    .filter((step) => step.demoPath);
+  const previousLab = previousLabs[previousLabs.length - 1];
+  const nextLab = info.steps
+    .slice(currentIndex + 1)
+    .find((step) => step.demoPath);
+  const doneCount = info.steps.filter(
+    (step) => getProgress(step.id).completed,
+  ).length;
+
+  const goTo = (demoPath?: string) => {
+    if (demoPath) {
+      navigate(demoPath);
+    }
+  };
+
+  return (
+    <div className={styles.bar}>
+      <Group className={styles.meta} gap="sm" wrap="nowrap">
+        <Badge color="teal" size="sm" variant="light">
+          第 {currentIndex + 1} / {info.total} 步
+        </Badge>
+        <Text c="dimmed" size="sm">
+          {info.label} · 已完成 {doneCount}/{info.total}
+        </Text>
+      </Group>
+
+      <Group className={styles.proficiency} gap="xs" wrap="nowrap">
+        <Rating
+          aria-label="标记熟练度"
+          onChange={(value) => setProficiency(current.id, value)}
+          size="xs"
+          value={currentProgress.proficiency ?? 0}
+        />
+        <Text c="dimmed" size="sm">
+          {currentProgress.proficiency
+            ? PROFICIENCY_LABELS[currentProgress.proficiency - 1]
+            : '未标记熟练度'}
+        </Text>
+      </Group>
+
+      <Group className={styles.actions} gap="xs" wrap="nowrap">
+        {previousLabs.length > 0 ? (
+          <Button
+            leftSection={<IconArrowLeft size={14} />}
+            onClick={() => goTo(previousLab.demoPath)}
+            size="xs"
+            variant="subtle"
+          >
+            上一模块
+          </Button>
+        ) : null}
+        {nextLab ? (
+          <Button
+            onClick={() => goTo(nextLab.demoPath)}
+            rightSection={<IconArrowRight size={14} />}
+            size="xs"
+            variant="subtle"
+          >
+            下一模块
+          </Button>
+        ) : null}
+        <Button
+          color={completed ? 'gray' : 'green'}
+          leftSection={completed ? <IconCheck size={14} /> : undefined}
+          onClick={() => setCompleted(current.id, !completed)}
+          size="xs"
+          variant={completed ? 'subtle' : 'filled'}
+        >
+          {completed ? '已完成' : '标记完成'}
+        </Button>
+      </Group>
+    </div>
+  );
+};
+
+export default LearningPathControls;

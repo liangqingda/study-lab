@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import type { DemoStructure } from '@/components/DemoStructureDialog/types';
 import DemoKnowledgeDialog from '@/components/DemoKnowledgeDialog';
 import DemoStructureDialog from '@/components/DemoStructureDialog';
-import LearningPathSteps from '@/components/LearningPathSteps';
+import LearningPathControls from '@/components/LearningPathControls';
 
 import styles from './index.scss';
 
@@ -48,7 +48,7 @@ const DemoLayout = ({
         <DemoKnowledgeDialog content={knowledge} demoName={demoName ?? title} />
       </Group>
     </header>
-    <LearningPathSteps />
+    <LearningPathControls />
     <div className={styles.content}>{children}</div>
   </div>
 );
