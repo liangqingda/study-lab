@@ -88,6 +88,19 @@
   font-size: 13px;
 }
 
+.content pre {
+  margin: 14px 0;
+  padding: 14px 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  background: var(--demo-code-bg);
+  color: var(--demo-code-ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre;
+}
+
 .lead {
   margin-top: 4px;
 }

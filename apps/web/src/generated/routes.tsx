@@ -49,6 +49,19 @@ const TechExpressWrapUpPage = lazy(
 const TechHttpUrlToPagePage = lazy(
   () => import("@/pages/Tech/Http/UrlToPage/index"),
 );
+const TechMcpArchitecturePage = lazy(
+  () => import("@/pages/Tech/Mcp/Architecture/index"),
+);
+const TechMcpIntroPage = lazy(() => import("@/pages/Tech/Mcp/Intro/index"));
+const TechMcpPromptsPage = lazy(() => import("@/pages/Tech/Mcp/Prompts/index"));
+const TechMcpResourcesPage = lazy(
+  () => import("@/pages/Tech/Mcp/Resources/index"),
+);
+const TechMcpToolsPage = lazy(() => import("@/pages/Tech/Mcp/Tools/index"));
+const TechMcpTransportsPage = lazy(
+  () => import("@/pages/Tech/Mcp/Transports/index"),
+);
+const TechMcpWrapUpPage = lazy(() => import("@/pages/Tech/Mcp/WrapUp/index"));
 const TechPostgresTransactionsPage = lazy(
   () => import("@/pages/Tech/Postgres/Transactions/index"),
 );
@@ -189,6 +202,62 @@ export const demoRoutes: DemoRoute[] = [
     Component: TechHttpUrlToPagePage,
   },
   {
+    path: "/tech/mcp",
+    menuKey: "/tech/mcp",
+    topLevelKey: "/tech",
+    label: "学习路径",
+    Component: CategoryLearningPathPage,
+  },
+  {
+    path: "/tech/mcp/architecture",
+    menuKey: "/tech/mcp/architecture",
+    topLevelKey: "/tech",
+    label: "architecture",
+    Component: TechMcpArchitecturePage,
+  },
+  {
+    path: "/tech/mcp/intro",
+    menuKey: "/tech/mcp/intro",
+    topLevelKey: "/tech",
+    label: "intro",
+    Component: TechMcpIntroPage,
+  },
+  {
+    path: "/tech/mcp/prompts",
+    menuKey: "/tech/mcp/prompts",
+    topLevelKey: "/tech",
+    label: "prompts",
+    Component: TechMcpPromptsPage,
+  },
+  {
+    path: "/tech/mcp/resources",
+    menuKey: "/tech/mcp/resources",
+    topLevelKey: "/tech",
+    label: "resources",
+    Component: TechMcpResourcesPage,
+  },
+  {
+    path: "/tech/mcp/tools",
+    menuKey: "/tech/mcp/tools",
+    topLevelKey: "/tech",
+    label: "tools",
+    Component: TechMcpToolsPage,
+  },
+  {
+    path: "/tech/mcp/transports",
+    menuKey: "/tech/mcp/transports",
+    topLevelKey: "/tech",
+    label: "transports",
+    Component: TechMcpTransportsPage,
+  },
+  {
+    path: "/tech/mcp/wrap-up",
+    menuKey: "/tech/mcp/wrap-up",
+    topLevelKey: "/tech",
+    label: "wrap-up",
+    Component: TechMcpWrapUpPage,
+  },
+  {
     path: "/tech/postgres/transactions",
     menuKey: "/tech/postgres/transactions",
     topLevelKey: "/tech",
@@ -276,6 +345,52 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
           key: "/tech/http/url-to-page",
           label: "url-to-page",
           path: "/tech/http/url-to-page",
+        },
+      ],
+    },
+    {
+      key: "group:/tech/mcp",
+      label: "mcp",
+      children: [
+        {
+          key: "/tech/mcp",
+          label: "学习路径",
+          path: "/tech/mcp",
+        },
+        {
+          key: "/tech/mcp/architecture",
+          label: "architecture",
+          path: "/tech/mcp/architecture",
+        },
+        {
+          key: "/tech/mcp/intro",
+          label: "intro",
+          path: "/tech/mcp/intro",
+        },
+        {
+          key: "/tech/mcp/prompts",
+          label: "prompts",
+          path: "/tech/mcp/prompts",
+        },
+        {
+          key: "/tech/mcp/resources",
+          label: "resources",
+          path: "/tech/mcp/resources",
+        },
+        {
+          key: "/tech/mcp/tools",
+          label: "tools",
+          path: "/tech/mcp/tools",
+        },
+        {
+          key: "/tech/mcp/transports",
+          label: "transports",
+          path: "/tech/mcp/transports",
+        },
+        {
+          key: "/tech/mcp/wrap-up",
+          label: "wrap-up",
+          path: "/tech/mcp/wrap-up",
         },
       ],
     },
