@@ -1,20 +1,28 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
   ActionIcon,
   Group,
+  Menu,
   SegmentedControl,
-  Select,
   Text,
   Title,
+  UnstyledButton,
   useComputedColorScheme,
   useMantineColorScheme,
 } from '@mantine/core';
 import {
+  IconBook,
   IconBrandGithub,
+  IconCheck,
+  IconChevronDown,
   IconMoon,
+  IconStack,
   IconSun,
   IconTerminal2,
 } from '@tabler/icons-react';
+
+import type { ReactNode } from 'react';
 
 import type { DemoMenuItem } from '@/generated/routes';
 
@@ -31,6 +39,98 @@ type HeaderProps = {
 const capitalize = (value: string) =>
   value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
 
+/** 每个领域（顶层大类）在切换器里的图标与副文案。 */
+const REALM_META: Record<
+  string,
+  { icon: ReactNode; hint: string } | undefined
+> = {
+  '/tech': { icon: <IconStack size={15} stroke={1.9} />, hint: '技术学习 Demo' },
+  '/skills': { icon: <IconBook size={15} stroke={1.9} />, hint: 'Agent Skill 文档' },
+};
+
+type RealmSwitcherProps = {
+  activeRealmKey?: string;
+  onRealmChange: (key: string) => void;
+  realms: DemoMenuItem[];
+};
+
+/**
+ * 顶层领域切换器：以「胶囊按钮 + 图标 + 当前领域」展示，点击展开领域下拉，
+ * 每项带图标与说明，并标记当前项。替代原先的普通 Select。
+ */
+const RealmSwitcher = ({
+  activeRealmKey,
+  onRealmChange,
+  realms,
+}: RealmSwitcherProps) => {
+  const [opened, setOpened] = useState(false);
+  const active = realms.find((realm) => realm.key === activeRealmKey);
+
+  return (
+    <Menu
+      onChange={setOpened}
+      opened={opened}
+      position="bottom-end"
+      shadow="md"
+      width={232}
+      withinPortal
+    >
+      <Menu.Target>
+        <UnstyledButton
+          aria-haspopup="menu"
+          aria-label="切换领域"
+          className={styles.realmSwitcher}
+          data-active={Boolean(active)}
+        >
+          <span aria-hidden="true" className={styles.realmSwitcherIcon}>
+            {active ? REALM_META[active.key]?.icon : null}
+          </span>
+          <span className={styles.realmSwitcherLabel}>
+            {active ? capitalize(active.label) : '领域'}
+          </span>
+          <IconChevronDown
+            aria-hidden="true"
+            className={styles.realmSwitcherChevron}
+            data-open={opened}
+            size={14}
+            stroke={2}
+          />
+        </UnstyledButton>
+      </Menu.Target>
+      <Menu.Dropdown>
+        {realms.map((realm) => {
+          const meta = REALM_META[realm.key];
+          const isActive = realm.key === activeRealmKey;
+
+          return (
+            <Menu.Item
+              key={realm.key}
+              leftSection={meta?.icon}
+              onClick={() => onRealmChange(realm.key)}
+              rightSection={
+                isActive ? (
+                  <IconCheck className={styles.realmItemCheck} size={15} />
+                ) : undefined
+              }
+            >
+              <Group gap={10} wrap="nowrap">
+                <Text fw={500} size="sm">
+                  {capitalize(realm.label)}
+                </Text>
+                {meta?.hint ? (
+                  <Text className={styles.realmItemHint} size="xs">
+                    {meta.hint}
+                  </Text>
+                ) : null}
+              </Group>
+            </Menu.Item>
+          );
+        })}
+      </Menu.Dropdown>
+    </Menu>
+  );
+};
+
 const Header = ({
   activeRealmKey,
   menus,
@@ -44,10 +144,6 @@ const Header = ({
   const activeMenuKey = selectedTopLevelKey ?? menus[0]?.key;
   const menuData = menus.map((item) => ({
     label: item.label,
-    value: item.key,
-  }));
-  const realmData = realms.map((item) => ({
-    label: capitalize(item.label),
     value: item.key,
   }));
 
@@ -97,16 +193,10 @@ const Header = ({
       ) : null}
 
       <Group gap="xs" ml="auto" wrap="nowrap">
-        <Select
-          aria-label="切换领域"
-          className={styles.realmSelect}
-          data={realmData}
-          onChange={handleRealmChange}
-          placeholder="领域"
-          radius="md"
-          size="sm"
-          value={activeRealmKey}
-          w={120}
+        <RealmSwitcher
+          activeRealmKey={activeRealmKey}
+          onRealmChange={handleRealmChange}
+          realms={realms}
         />
         <ActionIcon
           aria-label="查看源码仓库"
