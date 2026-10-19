@@ -22,7 +22,7 @@ import styles from './index.scss';
 /**
  * AI 使用面试题库：按主题与全文关键词筛选，复用统一知识阅读器。
  */
-const Problems = () => {
+const UseAi = () => {
   const [category, setCategory] = useState('all');
   const [query, setQuery] = useState('');
   const keywords = query
@@ -104,4 +104,4 @@ const Problems = () => {
   );
 };
 
-export default Problems;
+export default UseAi;

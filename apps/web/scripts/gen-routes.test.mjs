@@ -104,15 +104,15 @@ test('缺少大纲时拒绝从 Demo 自动拼出路径', () =>
     await assert.rejects(generateRoutes(root), /独立设计/);
   }));
 
-test('use AI 题库只展示 problems，其他分类仍要求学习大纲', () =>
+test('interview 分类展示 use AI 题库，其他分类仍要求学习大纲', () =>
   fixture(async (root, put) => {
-    await put('Tech/UseAi/Problems/index.tsx');
+    await put('Tech/Interview/UseAi/index.tsx');
     const { sidebarMenusByTopLevel: menus } = await generateRoutes(root);
     const category = menus['/tech'][0];
-    assert.equal(category.label, 'use AI');
+    assert.equal(category.label, 'interview');
     assert.deepEqual(
       category.children.map(({ label, path }) => ({ label, path })),
-      [{ label: 'problems', path: '/tech/use-ai/problems' }],
+      [{ label: 'use AI', path: '/tech/interview/use-ai' }],
     );
     await put('Tech/Other/Lab/index.tsx');
     await assert.rejects(generateRoutes(root), /独立设计/);

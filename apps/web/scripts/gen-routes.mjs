@@ -35,10 +35,9 @@ const SIDEBAR_ONLY_REALMS = new Set();
 const REALM_ORDER = ['tech', 'skills'];
 
 /**
- * use AI 按产品要求先作为题库分类，只生成 problems 菜单，不生成学习路径。
- * 展示名称保留空格与 AI 大写，URL 仍由目录生成。
+ * interview 按产品要求作为面试题库分类，不生成学习路径。
  */
-const QUESTION_BANK_CATEGORY = '/tech/use-ai';
+const QUESTION_BANK_CATEGORY = '/tech/interview';
 
 const compareByName = (left, right) => left.name.localeCompare(right.name);
 
@@ -339,11 +338,7 @@ const createSidebarMenus = (topLevelRoutes) => {
 
       return {
         key: `group:${pathToRoute([topLevelRoutes[0].segments[0], secondLevelSegment])}`,
-        label:
-          pathToRoute([topLevelRoutes[0].segments[0], secondLevelSegment]) ===
-          QUESTION_BANK_CATEGORY
-            ? 'use AI'
-            : secondLevelSegment,
+        label: secondLevelSegment,
         children: [
           ...(route
             ? [
@@ -416,7 +411,10 @@ export const generateRoutes = async (projectRoot = rootDir) => {
       ...createRouteEntry({
         filePath: pageFile.filePath,
         isIndexFile: pageFile.isIndexFile,
-        label: routeSegments.at(-1),
+        label:
+          routePath === `${QUESTION_BANK_CATEGORY}/use-ai`
+            ? 'use AI'
+            : routeSegments.at(-1),
         menuKey: pageFile.segments.length === 1 ? topLevelKey : routePath,
         segments: pageFile.segments,
         topLevelKey,
@@ -429,7 +427,7 @@ export const generateRoutes = async (projectRoot = rootDir) => {
     });
   }
 
-  // 学习大纲独立于 Demo 清单；use AI 题库按产品要求仅提供 problems。
+  // 学习大纲独立于 Demo 清单；interview 分类按产品要求仅提供面试题库。
   const configs = await collectLearningPathConfigs(pagesDir);
   const learningPaths = {};
   const categories = new Map();
