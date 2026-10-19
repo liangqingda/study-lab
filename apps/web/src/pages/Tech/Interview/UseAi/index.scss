@@ -1,11 +1,21 @@
+/* 移动端模块菜单占据文档流时，不再由主布局的最小高度撑开整页。 */
+:global(main):has(> .shell) {
+  min-height: 0;
+}
+
 .shell {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - var(--reader-top, 56px));
+  overflow: hidden;
   max-width: 1440px;
   margin: 0 auto;
   min-width: 0;
 }
 
 .header {
-  padding: 32px 32px 24px;
+  flex-shrink: 0;
+  padding: 24px 32px 20px;
   border-bottom: 1px solid var(--mantine-color-default-border);
 
   h1 {
@@ -16,6 +26,7 @@
 }
 
 .filters {
+  flex-shrink: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
@@ -23,15 +34,23 @@
   padding: 20px 32px;
   border-bottom: 1px solid var(--mantine-color-default-border);
 
+  input {
+    min-height: 44px;
+  }
+}
+
+.topics {
   label {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
   }
+}
 
-  input {
-    min-height: 44px;
-  }
+.reader {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .search {
@@ -40,12 +59,15 @@
 }
 
 .empty {
+  height: 100%;
+  overflow: auto;
+  align-content: flex-start;
   padding: 32px;
 }
 
 @media (max-width: 800px) {
   .header {
-    padding: 24px 16px;
+    padding: 16px;
 
     h1 {
       font-size: 26px;
@@ -53,7 +75,8 @@
   }
 
   .filters {
-    padding: 16px;
+    padding: 12px 16px;
+    gap: 8px;
   }
 
   .search {

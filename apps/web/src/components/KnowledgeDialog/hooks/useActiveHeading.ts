@@ -33,12 +33,18 @@ export const useActiveHeading = (
     }
 
     const update = () => {
+      const scrollport = article.closest('[data-knowledge-scroll]');
       const dialog = article.closest('[role="dialog"]');
       const dialogTop = Math.max(0, dialog?.getBoundingClientRect().top ?? 0);
-      const headerBottom = dialog?.querySelector('header')?.getBoundingClientRect().bottom ?? dialogTop;
-      const scrollMargin = Number.parseFloat(getComputedStyle(headings[0]).scrollMarginTop) || 0;
+      const headerBottom =
+        dialog?.querySelector('header')?.getBoundingClientRect().bottom ??
+        dialogTop;
+      const scrollMargin =
+        Number.parseFloat(getComputedStyle(headings[0]).scrollMarginTop) || 0;
       // 与章节跳转预留位置一致，容许 1px 的布局取整误差。
-      const activationTop = Math.max(dialogTop + scrollMargin, headerBottom) + 1;
+      const activationTop = scrollport
+        ? scrollport.getBoundingClientRect().top + scrollMargin + 1
+        : Math.max(dialogTop + scrollMargin, headerBottom) + 1;
       let current: string | null = null;
 
       for (const heading of headings) {
@@ -80,9 +86,17 @@ export const useActiveHeading = (
     const observer = new ResizeObserver(onScroll);
 
     observer.observe(article);
+    const scrollport = article.closest('[data-knowledge-scroll]');
+
+    if (scrollport) {
+      observer.observe(scrollport);
+    }
+
     const header = article.closest('[role="dialog"]')?.querySelector('header');
 
-    if (header) { observer.observe(header); }
+    if (header) {
+      observer.observe(header);
+    }
 
     return () => {
       window.removeEventListener('scroll', onScroll, true);

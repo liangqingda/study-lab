@@ -10,6 +10,7 @@ import {
 
 import KnowledgeReader from '@/components/KnowledgeDialog/Reader';
 
+import { useReaderViewport } from './hooks/useReaderViewport';
 import {
   INTRODUCTION,
   PRACTICE,
@@ -23,6 +24,7 @@ import styles from './index.scss';
  * AI 使用面试题库：按主题与全文关键词筛选，复用统一知识阅读器。
  */
 const UseAi = () => {
+  const viewportRef = useReaderViewport();
   const [category, setCategory] = useState('all');
   const [query, setQuery] = useState('');
   const keywords = query
@@ -54,7 +56,7 @@ const UseAi = () => {
   ].join('\n\n');
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.shell} ref={viewportRef}>
       <header className={styles.header}>
         <Title order={1}>AI 使用面试题与参考答案</Title>
         <Text c="dimmed">
@@ -65,6 +67,7 @@ const UseAi = () => {
       <section aria-label="题库筛选" className={styles.filters}>
         <SegmentedControl
           aria-label="题目主题"
+          className={styles.topics}
           data={[{ value: 'all', label: '全部问题' }, ...QUESTION_CATEGORIES]}
           onChange={setCategory}
           value={category}
@@ -81,25 +84,28 @@ const UseAi = () => {
           显示 {questions.length} / {QUESTIONS.length} 题
         </Text>
       </section>
-      {questions.length > 0 ? (
-        <KnowledgeReader
-          content={content}
-          key={`${category}:${query.trim()}`}
-        />
-      ) : (
-        <Group className={styles.empty} gap="md">
-          <Text>没有匹配的问题，试试其他关键词或查看全部题目。</Text>
-          <Button
-            onClick={() => {
-              setQuery('');
-              setCategory('all');
-            }}
-            variant="light"
-          >
-            重置筛选
-          </Button>
-        </Group>
-      )}
+      <div className={styles.reader}>
+        {questions.length > 0 ? (
+          <KnowledgeReader
+            contained
+            content={content}
+            key={`${category}:${query.trim()}`}
+          />
+        ) : (
+          <Group className={styles.empty} gap="md">
+            <Text>没有匹配的问题，试试其他关键词或查看全部题目。</Text>
+            <Button
+              onClick={() => {
+                setQuery('');
+                setCategory('all');
+              }}
+              variant="light"
+            >
+              重置筛选
+            </Button>
+          </Group>
+        )}
+      </div>
     </div>
   );
 };

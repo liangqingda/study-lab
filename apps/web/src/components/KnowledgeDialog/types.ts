@@ -64,6 +64,8 @@ type KnowledgeReaderProps = {
   content: string;
   /** 正文底部附加操作。 */
   footer?: ReactNode;
+  /** 在父容器给定的高度内，让目录与正文分别滚动并完整展示目录标题。 */
+  contained?: boolean;
 };
 
 /**

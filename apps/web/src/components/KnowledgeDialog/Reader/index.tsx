@@ -20,10 +20,15 @@ import styles from '../index.scss';
  * 两种知识阅读入口共用的目录、滚动高亮与 Markdown 正文。
  * 内容变更时由父组件重新挂载，重置目录折叠、高亮和阅读位置。
  */
-const KnowledgeReader = ({ content, footer }: KnowledgeReaderProps) => {
+const KnowledgeReader = ({
+  content,
+  footer,
+  contained = false,
+}: KnowledgeReaderProps) => {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
   const sidebarRef = useRef<HTMLElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
 
   const toc = useMemo(() => parseHeadings(content), [content]);
   const tocTree = useMemo(() => buildTree(toc), [toc]);
@@ -75,8 +80,12 @@ const KnowledgeReader = ({ content, footer }: KnowledgeReaderProps) => {
       return;
     }
 
-    const top = item.offsetTop;
-    const bottom = top + item.offsetHeight;
+    const row = item.firstElementChild ?? item;
+    const top =
+      row.getBoundingClientRect().top -
+      sidebar.getBoundingClientRect().top +
+      sidebar.scrollTop;
+    const bottom = top + row.getBoundingClientRect().height;
 
     if (top < sidebar.scrollTop) {
       sidebar.scrollTop = Math.max(0, top - 8);
@@ -89,7 +98,28 @@ const KnowledgeReader = ({ content, footer }: KnowledgeReaderProps) => {
     const target = document.getElementById(id);
 
     if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const scrollport = contained ? contentRef.current : null;
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)')
+        .matches
+        ? 'instant'
+        : 'smooth';
+
+      if (scrollport) {
+        const margin =
+          Number.parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+
+        scrollport.scrollTo({
+          top:
+            scrollport.scrollTop +
+            target.getBoundingClientRect().top -
+            scrollport.getBoundingClientRect().top -
+            margin,
+          behavior,
+        });
+      } else {
+        target.scrollIntoView({ behavior, block: 'start' });
+      }
+
       handleActiveChange(id);
     }
   };
@@ -116,7 +146,10 @@ const KnowledgeReader = ({ content, footer }: KnowledgeReaderProps) => {
   }, []);
 
   return (
-    <div className={styles.knowledgeLayout} ref={layoutRef}>
+    <div
+      className={`${styles.knowledgeLayout} ${contained ? styles.contained : ''}`}
+      ref={layoutRef}
+    >
       <aside className={styles.sidebar}>
         <nav
           aria-label="知识点目录"
@@ -139,7 +172,14 @@ const KnowledgeReader = ({ content, footer }: KnowledgeReaderProps) => {
           )}
         </nav>
       </aside>
-      <div className={styles.content}>
+      <div
+        aria-label={contained ? '知识点正文' : undefined}
+        className={styles.content}
+        data-knowledge-scroll={contained || undefined}
+        ref={contentRef}
+        role={contained ? 'region' : undefined}
+        tabIndex={contained ? 0 : undefined}
+      >
         <KnowledgeContent
           content={content}
           footer={footer}
