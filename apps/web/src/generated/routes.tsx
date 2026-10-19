@@ -89,7 +89,7 @@ export type DemoMenuItem = {
   sidebarOnly?: boolean;
 };
 
-export const defaultRoutePath = '/tech/css';
+export const defaultRoutePath = '/tech/ai-agent';
 
 export const demoRoutes: DemoRoute[] = [
   {
@@ -147,6 +147,13 @@ export const demoRoutes: DemoRoute[] = [
     topLevelKey: '/skills',
     label: 'tech-demo',
     Component: SkillsDemosTechDemoPage,
+  },
+  {
+    path: '/tech/ai-agent',
+    menuKey: '/tech/ai-agent',
+    topLevelKey: '/tech',
+    label: '学习路径',
+    Component: CategoryLearningPathPage,
   },
   {
     path: '/tech/css',
@@ -315,7 +322,7 @@ export const headerMenus: DemoMenuItem[] = [
   {
     key: '/tech',
     label: 'tech',
-    path: '/tech/css',
+    path: '/tech/ai-agent',
     sidebarOnly: false,
   },
   {
@@ -328,6 +335,17 @@ export const headerMenus: DemoMenuItem[] = [
 
 export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
   '/tech': [
+    {
+      key: 'group:/tech/ai-agent',
+      label: 'ai-agent',
+      children: [
+        {
+          key: '/tech/ai-agent',
+          label: '学习路径',
+          path: '/tech/ai-agent',
+        },
+      ],
+    },
     {
       key: 'group:/tech/css',
       label: 'css',
