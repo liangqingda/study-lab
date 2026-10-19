@@ -12,6 +12,7 @@ import type { KnowledgeReaderProps } from '../types';
 
 import KnowledgeContent from '../KnowledgeContent';
 import TocTree from '../TocTree';
+import { useTocScrollLock } from '../hooks/useTocScrollLock';
 import { buildTree, collectAncestors, parseHeadings } from '../utils';
 
 import styles from '../index.scss';
@@ -29,6 +30,8 @@ const KnowledgeReader = ({
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
   const sidebarRef = useRef<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const { releaseRef, lock } = useTocScrollLock();
+  const clickedIdRef = useRef<string | null>(null);
 
   const toc = useMemo(() => parseHeadings(content), [content]);
   const tocTree = useMemo(() => buildTree(toc), [toc]);
@@ -64,8 +67,22 @@ const KnowledgeReader = ({
     [tocTree],
   );
 
+  const handleScrollActiveChange = useCallback(
+    (id: string) => {
+      if (!releaseRef.current) {
+        handleActiveChange(id);
+      }
+    },
+    [handleActiveChange, releaseRef],
+  );
+
   /* 阅读位置变化时，让目录随动，保证高亮项始终在左侧可视范围内。 */
   useEffect(() => {
+    if (clickedIdRef.current === currentActive) {
+      clickedIdRef.current = null;
+      return;
+    }
+
     const sidebar = sidebarRef.current;
 
     if (!sidebar || !currentActive) {
@@ -99,6 +116,17 @@ const KnowledgeReader = ({
 
     if (target) {
       const scrollport = contained ? contentRef.current : null;
+      const scrollElement =
+        scrollport ??
+        target.closest('[role="dialog"]') ??
+        document.scrollingElement;
+
+      if (scrollElement) {
+        lock(scrollElement);
+      }
+
+      clickedIdRef.current = currentActive !== id ? id : null;
+      handleActiveChange(id);
       const behavior = window.matchMedia('(prefers-reduced-motion: reduce)')
         .matches
         ? 'instant'
@@ -119,8 +147,6 @@ const KnowledgeReader = ({
       } else {
         target.scrollIntoView({ behavior, block: 'start' });
       }
-
-      handleActiveChange(id);
     }
   };
 
@@ -183,7 +209,7 @@ const KnowledgeReader = ({
         <KnowledgeContent
           content={content}
           footer={footer}
-          onActiveChange={handleActiveChange}
+          onActiveChange={handleScrollActiveChange}
           toc={toc}
         />
       </div>
