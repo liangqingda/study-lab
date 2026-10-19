@@ -68,6 +68,9 @@ const TechPostgresTransactionsPage = lazy(
 const TechRedisSmsLoginPage = lazy(
   () => import("@/pages/Tech/Redis/SmsLogin/index"),
 );
+const TechUseAiProblemsPage = lazy(
+  () => import("@/pages/Tech/UseAi/Problems/index"),
+);
 
 export type DemoRoute = {
   path: string;
@@ -299,6 +302,13 @@ export const demoRoutes: DemoRoute[] = [
     label: "sms-login",
     Component: TechRedisSmsLoginPage,
   },
+  {
+    path: "/tech/use-ai/problems",
+    menuKey: "/tech/use-ai/problems",
+    topLevelKey: "/tech",
+    label: "problems",
+    Component: TechUseAiProblemsPage,
+  },
 ];
 
 export const headerMenus: DemoMenuItem[] = [
@@ -416,6 +426,17 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
           key: "/tech/redis/sms-login",
           label: "sms-login",
           path: "/tech/redis/sms-login",
+        },
+      ],
+    },
+    {
+      key: "group:/tech/use-ai",
+      label: "use AI",
+      children: [
+        {
+          key: "/tech/use-ai/problems",
+          label: "problems",
+          path: "/tech/use-ai/problems",
         },
       ],
     },

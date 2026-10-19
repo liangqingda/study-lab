@@ -34,6 +34,12 @@ const SIDEBAR_ONLY_REALMS = new Set();
  */
 const REALM_ORDER = ['tech', 'skills'];
 
+/**
+ * use AI 按产品要求先作为题库分类，只生成 problems 菜单，不生成学习路径。
+ * 展示名称保留空格与 AI 大写，URL 仍由目录生成。
+ */
+const QUESTION_BANK_CATEGORY = '/tech/use-ai';
+
 const compareByName = (left, right) => left.name.localeCompare(right.name);
 
 const jsString = (value) => JSON.stringify(value);
@@ -333,7 +339,11 @@ const createSidebarMenus = (topLevelRoutes) => {
 
       return {
         key: `group:${pathToRoute([topLevelRoutes[0].segments[0], secondLevelSegment])}`,
-        label: secondLevelSegment,
+        label:
+          pathToRoute([topLevelRoutes[0].segments[0], secondLevelSegment]) ===
+          QUESTION_BANK_CATEGORY
+            ? 'use AI'
+            : secondLevelSegment,
         children: [
           ...(route
             ? [
@@ -419,7 +429,7 @@ export const generateRoutes = async (projectRoot = rootDir) => {
     });
   }
 
-  // 学习大纲独立于 Demo 清单，所有非 Skills 分类必须显式设计。
+  // 学习大纲独立于 Demo 清单；use AI 题库按产品要求仅提供 problems。
   const configs = await collectLearningPathConfigs(pagesDir);
   const learningPaths = {};
   const categories = new Map();
@@ -427,6 +437,7 @@ export const generateRoutes = async (projectRoot = rootDir) => {
   for (const route of routes) {
     if (route.segments[0] === 'skills' || route.segments.length !== 3) continue;
     const categoryPath = pathToRoute(route.segments.slice(0, 2));
+    if (categoryPath === QUESTION_BANK_CATEGORY) continue;
     if (!categories.has(categoryPath)) categories.set(categoryPath, []);
     categories.get(categoryPath).push(route);
   }
